@@ -7,10 +7,9 @@
 
 - name: Install networking dependencies
   apt:
-    name: "{{ item }}"
+    pkg:
+      - resolvconf
     state: present
-  with_items:
-    - resolvconf
 
 - name: Configure additional network interfaces
   template:
