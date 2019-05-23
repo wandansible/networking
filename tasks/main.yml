@@ -1,20 +1,11 @@
 ---
-- name: Configure loopback interface
-  template:
-    src: interfaces
-    dest: /etc/network/interfaces
-  notify: restart networking
 
-- name: Install networking dependencies
-  apt:
-    pkg:
-      - resolvconf
-    state: present
+- name: Gather package facts
+  package_facts:
+    manager: auto
 
-- name: Configure additional network interfaces
-  template:
-    src: "{{ item }}"
-    dest: "/etc/network/interfaces.d/{{ item | basename }}"
-  with_fileglob:
-    - "../../../templates/interfaces/{{ inventory_hostname }}/*"
-  notify: restart networking
+- include: ifupdown.yml
+  when: "'ifupdown' in ansible_facts.packages"
+
+- include: netplan.yml
+  when: "'netplan.io' in ansible_facts.packages"

@@ -1,0 +1,27 @@
+#jinja2: trim_blocks: "false", lstrip_blocks: "true"
+# {{ ansible_managed }}
+
+network:
+  version: 2
+  renderer: {{ netplan_renderer }}
+  ethernets:
+{% for interface in network_interfaces %}
+  {% set addresses = interface['families'] | selectattr('address', 'defined') | map(attribute='address') | list %}
+    {{ interface['name'] }}:
+  {% if addresses | length >= 1 %}
+      addresses:
+    {% for address in addresses %}
+        - {{ address }}
+    {% endfor %}
+  {% endif %}
+  {% for family in interface['families'] %}
+    {% set family_version = family['name'].replace('ipv', '') %}
+    {% if 'gateway' in family %}
+      gateway{{ family_version }}: {{ family['gateway'] }}
+    {% endif %}
+    {% if family['type'] in ['dhcp', 'auto'] %}
+      dhcp{{ family_version }}: true
+    {% endif %}
+  {% endfor %}
+      {{ 'optional: false' if interface['waitonboot'] else 'optional: true' }}
+{% endfor %}

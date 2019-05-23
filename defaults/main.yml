@@ -1,0 +1,7 @@
+---
+network_interfaces: []
+dns_nameservers_v4: []
+dns_nameservers_v6: []
+dns_search: []
+
+netplan_renderer: networkd

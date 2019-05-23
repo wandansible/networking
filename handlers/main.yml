@@ -3,3 +3,6 @@
   service:
     name: networking.service
     state: restarted
+
+- name: netplan apply
+  command: netplan apply

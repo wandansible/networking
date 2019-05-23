@@ -1,0 +1,14 @@
+---
+- name: Configure netplan network interfaces
+  template:
+    src: netplan.yaml
+    dest: /etc/netplan/10-ansible.yaml
+  notify: netplan apply
+
+- name: Configure additional netplan network interfaces
+  template:
+    src: "{{ item }}"
+    dest: "/etc/netplan/{{ item | basename }}"
+  with_fileglob:
+    - "../../../templates/netplan/{{ inventory_hostname }}/*"
+  notify: netplan apply

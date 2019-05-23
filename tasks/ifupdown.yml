@@ -1,0 +1,27 @@
+---
+
+- name: Install extra ifupdown2 helpers
+  apt:
+    pkg:
+      - resolvconf
+    state: present
+
+- name: Configure ifupdown network interfaces
+  template:
+    src: interfaces
+    dest: /etc/network/interfaces
+  notify: restart networking
+
+- name: Create interfaces.d directory
+  file:
+    path: /etc/network/interfaces.d/
+    state: directory
+    mode: "0755"
+
+- name: Configure additional ifupdown network interfaces
+  template:
+    src: "{{ item }}"
+    dest: "/etc/network/interfaces.d/{{ item | basename }}"
+  with_fileglob:
+    - "../../../templates/interfaces/{{ inventory_hostname }}/*"
+  notify: restart networking

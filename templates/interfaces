@@ -1,3 +1,4 @@
+#jinja2: trim_blocks: "false", lstrip_blocks: "true"
 # {{ ansible_managed }}
 
 # This file describes the network interfaces available on your system
@@ -8,3 +9,32 @@ source /etc/network/interfaces.d/*
 # The loopback network interface
 auto lo
 iface lo inet loopback
+
+{% for interface in network_interfaces %}
+{{ 'auto' if interface['waitonboot'] else 'allow-hotplug' }} {{ interface['name'] }}
+  {% for family in interface['families'] %}
+iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet' }} {{ family['type'] }}
+      {% if family['type'] == 'static' %}
+  address {{ family['address'] | ipaddr('address') }}
+      {% if family['name'] == 'ipv4' %}
+  netmask {{ family['address'] | ipaddr('netmask') }}
+      {% elif family['name'] == 'ipv6' %}
+  netmask {{ family['address'] | ipaddr('prefix') }}
+      {% endif %}
+        {% if 'gateway' in family %}
+  gateway {{ family['gateway'] }}
+        {% endif %}
+      {% endif %}
+      {% if family['name'] == 'ipv4' and dns_nameservers_v4 %}
+  dns-nameservers {{ dns_nameservers_v4 | join(' ') }}
+      {% elif family['name'] == 'ipv6' and dns_nameservers_v6 %}
+  dns-nameservers {{ dns_nameservers_v6 | join(' ') }}
+      {% endif %}
+      {% if family['name'] == 'ipv4' and dns_search %}
+  dns-search {{ dns_search | join(' ') }}
+      {% endif %}
+  {% endfor %}
+  {% if not loop.last %}
+
+  {% endif %}
+{% endfor %}
