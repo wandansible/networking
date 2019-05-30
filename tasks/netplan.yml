@@ -3,6 +3,7 @@
   template:
     src: netplan.yaml
     dest: /etc/netplan/10-ansible.yaml
+  when: "network_interfaces | length >= 1"
   notify: netplan apply
 
 - name: Configure additional netplan network interfaces
