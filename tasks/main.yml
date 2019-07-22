@@ -1,11 +1,14 @@
 ---
 
-- name: Gather package facts
-  package_facts:
-    manager: auto
+- name: Check for netplan
+  stat:
+    path: /usr/sbin/netplan
+  register: check_for_netplan
 
-- include: ifupdown.yml
-  when: "'ifupdown' in ansible_facts.packages"
+- name: Configure networking interfaces with ifupdown
+  include_tasks: ifupdown.yml
+  when: "not check_for_netplan.stat.exists"
 
-- include: netplan.yml
-  when: "'netplan.io' in ansible_facts.packages"
+- name: Configure networking interfaces with netplan
+  include_tasks: netplan.yml
+  when: "check_for_netplan.stat.exists"
