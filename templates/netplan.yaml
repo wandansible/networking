@@ -1,13 +1,12 @@
 #jinja2: trim_blocks: "false", lstrip_blocks: "true"
 # {{ ansible_managed }}
 
-network:
-  version: 2
-  renderer: {{ netplan_renderer }}
-  ethernets:
-{% for interface in network_interfaces %}
+{% macro interface_block(interface) %}
   {% set addresses = interface['families'] | selectattr('address', 'defined') | map(attribute='address') | list %}
     {{ interface['name'] }}:
+  {% if 'bridge_ports' in interface %}
+      interfaces: {{ '[' + interface['bridge_ports'] | join(', ') + ']' }}
+  {% endif %}
   {% if addresses | length >= 1 %}
       addresses:
     {% for address in addresses %}
@@ -24,4 +23,22 @@ network:
     {% endif %}
   {% endfor %}
       {{ 'optional: false' if interface['waitonboot'] else 'optional: true' }}
-{% endfor %}
+{% endmacro %}
+
+network:
+  version: 2
+  renderer: {{ netplan_renderer }}
+{% set ethernets = network_interfaces | selectattr('bridge_ports', 'undefined') | list %}
+{% if ethernets | length >= 1 %}
+  ethernets:
+  {% for interface in ethernets %}
+{{ interface_block(interface) }}
+  {% endfor %}
+{% endif %}
+{% set bridges = network_interfaces | selectattr('bridge_ports', 'defined') | list %}
+{% if bridges | length >= 1 %}
+  bridges:
+  {% for interface in bridges %}
+{{ interface_block(interface) }}
+  {% endfor %}
+{% endif %}

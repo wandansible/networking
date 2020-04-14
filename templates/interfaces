@@ -33,6 +33,14 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
       {% if family['name'] == 'ipv4' and dns_search %}
   dns-search {{ dns_search | join(' ') }}
       {% endif %}
+      {% if loop.first %}
+        {% if 'bridge_ports' in interface %}
+  bridge_ports {{ interface["bridge_ports"] | join(' ') | default('none', true) }}
+        {% endif %}
+        {% if 'bridge_waitport' in interface %}
+  bridge_waitport {{ interface["bridge_waitport"] }}
+        {% endif %}
+      {% endif %}
   {% endfor %}
   {% if not loop.last %}
 

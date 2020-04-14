@@ -1,5 +1,12 @@
 ---
 
+- name: Install bridge-utils package if bridges are configured
+  apt:
+    pkg:
+      - bridge-utils
+    state: present
+  when: "network_interfaces | selectattr('bridge_ports', 'defined') | list"
+
 - name: Check for netplan
   stat:
     path: /usr/sbin/netplan
