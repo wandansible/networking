@@ -22,11 +22,26 @@
       dhcp{{ family_version }}: true
     {% endif %}
   {% endfor %}
+  {% if dns_nameservers_v4 | union(dns_nameservers_v6) | union(dns_search) | length >= 1 %}
+      nameservers:
+    {% if dns_nameservers_v4 | union(dns_nameservers_v6) | length >= 1 %}
+        addresses:
+      {% for nameserver in dns_nameservers_v4 | union(dns_nameservers_v6) | unique %}
+          - "{{ nameserver }}"
+      {% endfor %}
+    {% endif %}
+    {% if dns_search | length >= 1 %}
+        search:
+      {% for domain in dns_search %}
+          - {{ domain }}
+      {% endfor %}
+    {% endif %}
+  {% endif %}
   {% if 'mtu' in interface %}
       mtu: {{ interface['mtu'] }}
   {% endif %}
       {{ 'optional: false' if interface['waitonboot'] else 'optional: true' }}
-{% endmacro %}
+{% endmacro -%}
 
 network:
   version: 2
