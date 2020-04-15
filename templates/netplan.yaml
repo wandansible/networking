@@ -22,6 +22,9 @@
       dhcp{{ family_version }}: true
     {% endif %}
   {% endfor %}
+  {% if 'mtu' in interface %}
+      mtu: {{ interface['mtu'] }}
+  {% endif %}
       {{ 'optional: false' if interface['waitonboot'] else 'optional: true' }}
 {% endmacro %}
 

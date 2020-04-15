@@ -40,6 +40,9 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
         {% if 'bridge_waitport' in interface %}
   bridge_waitport {{ interface["bridge_waitport"] }}
         {% endif %}
+        {% if 'mtu' in interface %}
+  mtu {{ interface['mtu'] }}
+        {% endif %}
       {% endif %}
   {% endfor %}
   {% if not loop.last %}
