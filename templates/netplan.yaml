@@ -10,13 +10,13 @@
   {% if addresses | length >= 1 %}
       addresses:
     {% for address in addresses %}
-        - {{ address }}
+        - "{{ address }}"
     {% endfor %}
   {% endif %}
   {% for family in interface['families'] %}
     {% set family_version = family['name'].replace('ipv', '') %}
     {% if 'gateway' in family %}
-      gateway{{ family_version }}: {{ family['gateway'] }}
+      gateway{{ family_version }}: "{{ family['gateway'] }}"
     {% endif %}
     {% if family['type'] in ['dhcp', 'auto'] %}
       dhcp{{ family_version }}: true
