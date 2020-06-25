@@ -8,6 +8,11 @@
   {% if 'bridge_ports' in interface %}
       interfaces: {{ '[' + interface['bridge_ports'] | join(', ') + ']' }}
   {% endif %}
+  {% if 'match_mac' in interface %}
+      match:
+        macaddress: {{ interface['match_mac'] }}
+      set-name: {{ interface['name'] }}
+  {% endif %}
   {% if addresses | length >= 1 %}
       addresses:
     {% for address in addresses %}
