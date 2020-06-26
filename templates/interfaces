@@ -25,13 +25,15 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
   gateway {{ family['gateway'] }}
         {% endif %}
       {% endif %}
-      {% if family['name'] == 'ipv4' and dns_nameservers_v4 %}
+      {% if family['type'] == 'static' %}
+        {% if family['name'] == 'ipv4' and dns_nameservers_v4 %}
   dns-nameservers {{ dns_nameservers_v4 | join(' ') }}
-      {% elif family['name'] == 'ipv6' and dns_nameservers_v6 %}
+        {% elif family['name'] == 'ipv6' and dns_nameservers_v6 %}
   dns-nameservers {{ dns_nameservers_v6 | join(' ') }}
-      {% endif %}
-      {% if family['name'] == 'ipv4' and dns_search %}
+        {% endif %}
+        {% if family['name'] == 'ipv4' and dns_search %}
   dns-search {{ dns_search | join(' ') }}
+        {% endif %}
       {% endif %}
       {% if loop.first %}
         {% if 'bridge_ports' in interface %}

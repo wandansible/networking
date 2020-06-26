@@ -3,9 +3,15 @@
 
 {% macro interface_block(interface) %}
   {% set addresses = interface['families'] | selectattr('address', 'defined') | map(attribute='address') | list %}
+  {% set static_families = interface['families'] | selectattr('type', 'equalto', 'static') | list %}
     {{ interface['name'] }}:
   {% if 'bridge_ports' in interface %}
       interfaces: {{ '[' + interface['bridge_ports'] | join(', ') + ']' }}
+  {% endif %}
+  {% if 'match_mac' in interface %}
+      match:
+        macaddress: {{ interface['match_mac'] }}
+      set-name: {{ interface['name'] }}
   {% endif %}
   {% if addresses | length >= 1 %}
       addresses:
@@ -22,19 +28,21 @@
       dhcp{{ family_version }}: true
     {% endif %}
   {% endfor %}
-  {% if dns_nameservers_v4 | union(dns_nameservers_v6) | union(dns_search) | length >= 1 %}
+  {% if static_families | length >=1 %}
+    {% if dns_nameservers_v4 | union(dns_nameservers_v6) | union(dns_search) | length >= 1 %}
       nameservers:
-    {% if dns_nameservers_v4 | union(dns_nameservers_v6) | length >= 1 %}
+      {% if dns_nameservers_v4 | union(dns_nameservers_v6) | length >= 1 %}
         addresses:
-      {% for nameserver in dns_nameservers_v4 | union(dns_nameservers_v6) | unique %}
+        {% for nameserver in dns_nameservers_v4 | union(dns_nameservers_v6) | unique %}
           - "{{ nameserver }}"
-      {% endfor %}
-    {% endif %}
-    {% if dns_search | length >= 1 %}
+        {% endfor %}
+      {% endif %}
+      {% if dns_search | length >= 1 %}
         search:
-      {% for domain in dns_search %}
+        {% for domain in dns_search %}
           - {{ domain }}
-      {% endfor %}
+        {% endfor %}
+      {% endif %}
     {% endif %}
   {% endif %}
   {% if 'mtu' in interface %}
