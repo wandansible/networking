@@ -4,6 +4,7 @@
   apt:
     pkg:
       - resolvconf
+      - vlan
     state: present
 
 - name: Configure ifupdown network interfaces
