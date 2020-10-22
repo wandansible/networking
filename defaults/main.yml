@@ -1,5 +1,6 @@
 ---
 network_interfaces: []
+network_dad_attempts: 100
 dns_nameservers_v4: []
 dns_nameservers_v6: []
 dns_search: []

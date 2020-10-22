@@ -25,6 +25,9 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
   gateway {{ family['gateway'] }}
         {% endif %}
       {% endif %}
+      {% if family['type'] == 'static' and family['name'] == 'ipv6' %}
+  dad-attempts {{ network_dad_attempts }}
+      {% endif %}
       {% if family['type'] == 'static' %}
         {% if family['name'] == 'ipv4' and dns_nameservers_v4 %}
   dns-nameservers {{ dns_nameservers_v4 | join(' ') }}
