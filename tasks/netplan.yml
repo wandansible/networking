@@ -11,6 +11,8 @@
     path: "{{ item['path'] }}"
     state: absent
   loop: "{{ _netplan_configs['files'] }}"
+  loop_control:
+    label: "{{ item['path'] }}"
   when:
     - item['path'] != "/etc/netplan/10-ansible.yaml"
     - network_interfaces | length >= 1
