@@ -10,7 +10,7 @@
   file:
     path: "{{ item['path'] }}"
     state: absent
-  with_items: "{{ _netplan_configs['files'] }}"
+  loop: "{{ _netplan_configs['files'] }}"
   when:
     - item['path'] != "/etc/netplan/10-ansible.yaml"
     - network_interfaces | length >= 1
