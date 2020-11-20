@@ -13,9 +13,11 @@
   register: check_for_netplan
 
 - name: Configure networking interfaces with ifupdown
-  include_tasks: ifupdown.yml
+  include_tasks:
+    file: ifupdown.yml
   when: "not check_for_netplan.stat.exists"
 
 - name: Configure networking interfaces with netplan
-  include_tasks: netplan.yml
+  include_tasks:
+    file: netplan.yml
   when: "check_for_netplan.stat.exists"
