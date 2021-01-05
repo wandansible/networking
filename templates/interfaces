@@ -11,6 +11,11 @@ auto lo
 iface lo inet loopback
 
 {% for interface in network_interfaces %}
+  {% set is_added = namespace(
+    dns_nameservers_v4=false,
+    dns_nameservers_v6=false,
+    dns_search=false
+  ) %}
 {{ 'auto' if interface['waitonboot'] else 'allow-hotplug' }} {{ interface['name'] }}
   {% for family in interface['families'] %}
 iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet' }} {{ family['type'] }}
@@ -29,13 +34,24 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
   dad-attempts {{ network_dad_attempts }}
       {% endif %}
       {% if family['type'] == 'static' %}
-        {% if family['name'] == 'ipv4' and dns_nameservers_v4 %}
-  dns-nameservers {{ dns_nameservers_v4 | join(' ') }}
-        {% elif family['name'] == 'ipv6' and dns_nameservers_v6 %}
-  dns-nameservers {{ dns_nameservers_v6 | join(' ') }}
+        {% if interface['dns_nameservers'] is defined and interface['dns_nameservers'] | length >= 1 %}
+          {% if family['name'] == 'ipv4' %}
+            {% if interface['dns_nameservers'] | ipv4 | length >= 1 and not is_added.dns_nameservers_v4 %}
+  dns-nameservers {{ interface['dns_nameservers'] | ipv4 | join(' ') }}
+              {% set is_added.dns_nameservers_v4 = true %}
+            {% endif %}
+          {% elif family['name'] == 'ipv6' %}
+            {% if interface['dns_nameservers'] | ipv6 | length >= 1 and not is_added.dns_nameservers_v6 %}
+  dns-nameservers {{ interface['dns_nameservers'] | ipv6 | join(' ') }}
+              {% set is_added.dns_nameservers_v6 = true %}
+            {% endif %}
+          {% endif %}
         {% endif %}
-        {% if family['name'] == 'ipv4' and dns_search %}
-  dns-search {{ dns_search | join(' ') }}
+        {% if interface['dns_search'] is defined and interface['dns_search'] | length >= 1 %}
+          {% if not is_added.dns_search %}
+  dns-search {{ interface['dns_search'] | join(' ') }}
+            {% set is_added.dns_search = true %}
+          {% endif %}
         {% endif %}
       {% endif %}
       {% if loop.first %}
