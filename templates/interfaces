@@ -64,6 +64,26 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
         {% if 'mtu' in interface %}
   mtu {{ interface['mtu'] }}
         {% endif %}
+        {% if 'access_points' in interface %}
+          {% set ap = interface['access_points'].0 %}
+  wpa-ssid "{{ ap['ssid'] }}"
+          {% if 'password' in ap %}
+            {% if 'key-management' not in ap or ap['key-management'] == 'psk' %}
+  wpa-key-mgmt WPA-PSK
+  wpa-psk "{{ ap['password'] }}"
+            {% elif ap['key-management'] == 'eap' %}
+  wpa-key-mgmt WPA-EAP
+  wpa-eap {{ ap['method'] | upper }}
+              {% if 'phase2-auth' in ap %}
+  wpa-phase2 "auth={{ ap['phase2'] | upper }}"
+              {% endif %}
+  wpa-identity {{ ap['identity'] }}
+  wpa-password {{ ap['password'] }}
+            {% endif %}
+          {% else %}
+  wpa-key-mgmt NONE
+          {% endif %}
+        {% endif %}
       {% endif %}
   {% endfor %}
   {% if not loop.last %}

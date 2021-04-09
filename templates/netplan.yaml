@@ -51,15 +51,48 @@
       mtu: {{ interface['mtu'] }}
   {% endif %}
       {{ 'optional: false' if interface['waitonboot'] else 'optional: true' }}
+  {% if 'access_points' in interface %}
+      access-points:
+    {% for ap in interface['access_points'] %}
+      {% if 'password' in ap %}
+        "{{ ap['ssid'] }}":
+          auth:
+        {% if 'key-management' in ap %}
+            key-management: {{ ap['key-management'] | lower }}
+        {% else %}
+            key-management: psk
+        {% endif %}
+        {% if 'method' in ap %}
+            method: {{ ap['method'] | lower }}
+        {% endif %}
+        {% if 'phase2-auth' in ap %}
+            phase2-auth: {{ ap['phase2-auth'] | upper }}
+        {% endif %}
+        {% if 'identity' in ap %}
+            identity: "{{ ap['identity'] }}"
+        {% endif %}
+            password: "{{ ap['password'] }}"
+      {% else %}
+        "{{ ap['ssid'] }}": {}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 {% endmacro -%}
 
 network:
   version: 2
   renderer: {{ netplan_renderer }}
-{% set ethernets = network_interfaces | selectattr('bridge_ports', 'undefined') | list %}
+{% set ethernets = network_interfaces | selectattr('bridge_ports', 'undefined') | selectattr('access_points', 'undefined') | list %}
 {% if ethernets | length >= 1 %}
   ethernets:
   {% for interface in ethernets %}
+{{ interface_block(interface) }}
+  {% endfor %}
+{% endif %}
+{% set wifis = network_interfaces | selectattr('access_points', 'defined') | list %}
+{% if wifis | length >= 1 %}
+  wifis:
+  {% for interface in wifis %}
 {{ interface_block(interface) }}
   {% endfor %}
 {% endif %}
