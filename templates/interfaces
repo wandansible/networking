@@ -16,7 +16,14 @@ iface lo inet loopback
     dns_nameservers_v6=false,
     dns_search=false
   ) %}
-{{ 'auto' if interface['waitonboot'] else 'allow-hotplug' }} {{ interface['name'] }}
+  {% if interface['waitonboot'] %}
+auto {{ interface['name'] }}
+  {% endif %}
+  {% if interface['allow'] is defined %}
+allow-{{ interface['allow'] }} {{ interface['name'] }}
+  {% elif not interface['waitonboot'] %}
+allow-hotplug {{ interface['name'] }}
+  {% endif %}
   {% for family in interface['families'] %}
 iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet' }} {{ family['type'] }}
       {% if family['type'] == 'static' %}
