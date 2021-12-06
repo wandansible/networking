@@ -1,4 +1,5 @@
 #jinja2: trim_blocks: "false", lstrip_blocks: "true"
+---
 # {{ ansible_managed }}
 
 {% macro interface_block(interface) %}
@@ -93,21 +94,21 @@ network:
   ethernets:
   {% for interface in ethernets %}
 {{ interface_block(interface) }}
-  {% endfor %}
+  {%- endfor %}
 {% endif %}
 {% set wifis = network_interfaces | selectattr('access_points', 'defined') | list %}
 {% if wifis | length >= 1 %}
   wifis:
   {% for interface in wifis %}
 {{ interface_block(interface) }}
-  {% endfor %}
+  {%- endfor %}
 {% endif %}
 {% set bridges = network_interfaces | selectattr('bridge_ports', 'defined') | list %}
 {% if bridges | length >= 1 %}
   bridges:
   {% for interface in bridges %}
 {{ interface_block(interface) }}
-  {% endfor %}
+  {%- endfor %}
 {% endif %}
 {% set vlans = [] %}
 {% for interface in network_interfaces | selectattr('vlans', 'defined') | list %}
