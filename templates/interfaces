@@ -10,7 +10,14 @@ source /etc/network/interfaces.d/*
 auto lo
 iface lo inet loopback
 
+{% set _network_interfaces = [] %}
 {% for interface in network_interfaces %}
+  {% set _ = _network_interfaces.append(interface) %}
+  {% for vlan in interface['vlans'] | default([]) %}
+    {% set _ = _network_interfaces.append({ 'name': interface['name'] + '.' + vlan['id'] | string } | combine(vlan)) %}
+  {% endfor %}
+{% endfor %}
+{% for interface in _network_interfaces %}
   {% set is_added = namespace(
     dns_nameservers_v4=false,
     dns_nameservers_v6=false,

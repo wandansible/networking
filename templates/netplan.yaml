@@ -77,6 +77,12 @@
       {% endif %}
     {% endfor %}
   {% endif %}
+  {% if interface['link'] is defined and interface['link'] != "" %}
+      link: {{ interface['link'] }}
+  {% endif %}
+  {% if interface['id'] is defined and interface['id'] != "" %}
+      id: {{ interface['id'] }}
+  {% endif %}
 {% endmacro -%}
 
 network:
@@ -102,4 +108,16 @@ network:
   {% for interface in bridges %}
 {{ interface_block(interface) }}
   {% endfor %}
+{% endif %}
+{% set vlans = [] %}
+{% for interface in network_interfaces | selectattr('vlans', 'defined') | list %}
+  {% for vlan in interface['vlans'] %}
+    {% set _ = vlans.append({ 'name': interface['name'] + '.' + vlan['id'] | string, 'link': interface['name'] } | combine(vlan)) %}
+  {% endfor %}
+{% endfor %}
+{% if vlans | length >= 1 %}
+  vlans:
+  {% for interface in vlans %}
+{{ interface_block(interface) }}
+  {%- endfor %}
 {% endif %}
