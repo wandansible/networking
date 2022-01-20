@@ -22,7 +22,9 @@
     src: netplan.yaml
     dest: /etc/netplan/10-ansible.yaml
   when: "network_interfaces | length >= 1"
-  notify: netplan apply
+  notify:
+    - confirm network change
+    - netplan apply
 
 - name: Configure additional netplan network interfaces
   template:
@@ -30,4 +32,6 @@
     dest: "/etc/netplan/{{ item | basename }}"
   with_fileglob:
     - "../../../templates/netplan/{{ inventory_hostname }}/*"
-  notify: netplan apply
+  notify:
+    - confirm network change
+    - netplan apply

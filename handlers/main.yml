@@ -1,4 +1,9 @@
 ---
+- name: confirm network change
+  ansible.builtin.pause:
+    prompt: Please check the network configuration changes. Press enter to apply
+  when: network_wait_on_change
+
 - name: restart networking
   service:
     name: networking.service
