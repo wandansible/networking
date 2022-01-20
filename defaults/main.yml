@@ -3,3 +3,5 @@ network_interfaces: []
 network_dad_attempts: 100
 
 netplan_renderer: networkd
+
+network_wait_on_change: true

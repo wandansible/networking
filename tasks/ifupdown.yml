@@ -11,7 +11,9 @@
   template:
     src: interfaces
     dest: /etc/network/interfaces
-  notify: restart networking
+  notify:
+    - confirm network change
+    - restart networking
 
 - name: Create interfaces.d directory
   file:
@@ -25,4 +27,6 @@
     dest: "/etc/network/interfaces.d/{{ item | basename }}"
   with_fileglob:
     - "../../../templates/interfaces/{{ inventory_hostname }}/*"
-  notify: restart networking
+  notify:
+    - confirm network change
+    - restart networking
