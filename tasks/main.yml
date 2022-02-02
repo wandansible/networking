@@ -21,16 +21,13 @@
   failed_when: false
 
 - name: Configure wireless devices
-  ansible.builtin.import_tasks:
-    file: wifi.yml
+  ansible.builtin.import_tasks: wifi.yml
   when: "check_for_wireless.stdout_lines | length > 0"
 
 - name: Configure networking interfaces with ifupdown
-  ansible.builtin.import_tasks:
-    file: ifupdown.yml
+  ansible.builtin.import_tasks: ifupdown.yml
   when: "not check_for_netplan.stat.exists"
 
 - name: Configure networking interfaces with netplan
-  ansible.builtin.import_tasks:
-    file: netplan.yml
+  ansible.builtin.import_tasks: netplan.yml
   when: "check_for_netplan.stat.exists"
