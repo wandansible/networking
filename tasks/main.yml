@@ -1,21 +1,24 @@
 ---
 
 - name: Install bridge-utils package if bridges are configured
-  apt:
+  ansible.builtin.apt:
     pkg:
       - bridge-utils
     state: present
   when: "network_interfaces | selectattr('bridge_ports', 'defined') | list"
 
 - name: Check for netplan
-  stat:
+  ansible.builtin.stat:
     path: /usr/sbin/netplan
   register: check_for_netplan
 
 - name: Check if this device has any wireless interfaces
   ansible.builtin.shell: |
+    set -eo pipefail
     find /sys/class/ieee80211/ -type l
     ip -all netns exec find /sys/class/ieee80211/ -type l | grep "/sys/class/ieee80211/"
+  args:
+    executable: /bin/bash
   register: check_for_wireless
   changed_when: false
   failed_when: false

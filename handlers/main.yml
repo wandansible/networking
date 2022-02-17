@@ -5,10 +5,10 @@
   when: network_wait_on_change
 
 - name: restart networking
-  service:
+  ansible.builtin.service:
     name: networking.service
     state: restarted
 
 - name: netplan apply
-  command:
+  ansible.builtin.command:
     cmd: netplan apply

@@ -1,13 +1,13 @@
 ---
 
 - name: Get existing netplan configuration files
-  find:
+  ansible.builtin.find:
     paths: /etc/netplan
     patterns: "*.yml,*.yaml"
   register: _netplan_configs
 
 - name: Remove existing netplan configuration files
-  file:
+  ansible.builtin.file:
     path: "{{ item['path'] }}"
     state: absent
   loop: "{{ _netplan_configs['files'] }}"
@@ -18,18 +18,24 @@
     - network_interfaces | length >= 1
 
 - name: Configure netplan network interfaces
-  template:
+  ansible.builtin.template:
     src: netplan.yaml
     dest: /etc/netplan/10-ansible.yaml
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   when: "network_interfaces | length >= 1"
   notify:
     - confirm network change
     - netplan apply
 
 - name: Configure additional netplan network interfaces
-  template:
+  ansible.builtin.template:
     src: "{{ item }}"
     dest: "/etc/netplan/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   with_fileglob:
     - "../../../templates/netplan/{{ inventory_hostname }}/*"
   notify:
