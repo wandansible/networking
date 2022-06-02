@@ -29,11 +29,11 @@ allow-hotplug {{ interface['name'] }}
   {% for family in interface['families'] %}
 iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet' }} {{ family['type'] }}
       {% if family['type'] == 'static' %}
-  address {{ family['address'] | ipaddr('address') }}
+  address {{ family['address'] | ansible.utils.ipaddr('address') }}
       {% if family['name'] == 'ipv4' %}
-  netmask {{ family['address'] | ipaddr('netmask') }}
+  netmask {{ family['address'] | ansible.utils.ipaddr('netmask') }}
       {% elif family['name'] == 'ipv6' %}
-  netmask {{ family['address'] | ipaddr('prefix') }}
+  netmask {{ family['address'] | ansible.utils.ipaddr('prefix') }}
       {% endif %}
         {% if 'gateway' in family %}
   gateway {{ family['gateway'] }}
@@ -45,12 +45,12 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
       {% if family['type'] == 'static' %}
         {% if interface['dns_nameservers'] is defined and interface['dns_nameservers'] | length >= 1 %}
           {% if family['name'] == 'ipv4' %}
-            {% if interface['dns_nameservers'] | ipv4 | length >= 1 %}
-  dns-nameservers {{ interface['dns_nameservers'] | ipv4 | join(' ') }}
+            {% if interface['dns_nameservers'] | ansible.utils.ipv4 | length >= 1 %}
+  dns-nameservers {{ interface['dns_nameservers'] | ansible.utils.ipv4 | join(' ') }}
             {% endif %}
           {% elif family['name'] == 'ipv6' %}
-            {% if interface['dns_nameservers'] | ipv6 | length >= 1 %}
-  dns-nameservers {{ interface['dns_nameservers'] | ipv6 | join(' ') }}
+            {% if interface['dns_nameservers'] | ansible.utils.ipv6 | length >= 1 %}
+  dns-nameservers {{ interface['dns_nameservers'] | ansible.utils.ipv6 | join(' ') }}
             {% endif %}
           {% endif %}
         {% endif %}
