@@ -1,0 +1,218 @@
+---
+argument_specs:
+  main:
+    short_description: Configure networking interfaces with ifupdown or netplan
+    description: |
+      Configure and apply networking interface configuration (including VLANs, and WiFi)
+      with either ifupdown or netplan depending on which is installed on the host system.
+    options:
+      network_dad_attempts:
+        description: Number of attempts to settle DAD (0 to disable DAD)
+        type: int
+        default: 100
+
+      netplan_renderer:
+        description: Networking backend to use for netplan
+        type: str
+        default: networkd
+        choices:
+          - networkd
+          - NetworkManager
+          - sriov
+
+      network_wait_on_change:
+        description: |
+          If true, wait for user to accept any network configuration changes before continuing
+          and applying the changes
+        type: bool
+        default: true
+
+      network_interfaces:
+        description: List of network interfaces to configure
+        type: list
+        elements: dict
+        options:
+          name:
+            description: Interface name
+            type: str
+            required: true
+          waitonboot:
+            description: If true, wait for interface to come up before booting
+            type: bool
+            required: true
+          allow:
+            description: Subsystem the interface should be brought up by (ifupdown only)
+            type: str
+          dns_nameservers:
+            description: List of DNS resolver IP addresses
+            type: list
+            elements: str
+          dns_search:
+            description: List of DNS search domains
+            type: list
+            elements: str
+          mtu:
+            description: Interface MTU
+            type: int
+          match_mac:
+            description: Apply configuration by matching MAC address instead of interface name (netplan only)
+            type: str
+          bridge_ports:
+            description: Interfaces to add to bridge
+            type: list
+            elements: str
+          bridge_waitport:
+            description: Time in seconds to wait for bridge ports to come up
+            type: int
+          access_points:
+            description: List of wireless networks to configure
+            type: list
+            elements: dict
+            options:
+              ssid:
+                description: SSID
+                type: str
+              key-management:
+                description: Key management mode
+                type: str
+                default: psk
+                choices:
+                  - none
+                  - psk
+                  - eap
+              password:
+                description: The password string for EAP, or the pre-shared key for WPA-PSK
+                type: str
+              phase2-auth:
+                description: The phase 2 auth mechanism
+                type: str
+              method:
+                description: The EAP method to use
+                type: str
+                choices:
+                  - tls
+                  - peap
+                  - ttls
+              identity:
+                description: The identity to use for EAP
+                type: str
+          families:
+            description: List of IP address families to configure
+            type: list
+            elements: dict
+            options:
+              name:
+                description: IP address family
+                type: str
+                required: true
+                choices:
+                  - ipv4
+                  - ipv6
+              type:
+                description: IP address autoconfiguration source
+                type: str
+                required: true
+                choices:
+                  - static
+                  - dhcp
+                  - auto
+                  - manual
+              address:
+                description: Static IP address for interface
+                type: str
+              gateway:
+                description: Default gateway
+                type: str
+          vlans:
+            description: List of VLAN interfaces to configure
+            type: list
+            elements: dict
+            options:
+              id:
+                description: VLAN ID
+                type: int
+                required: true
+              waitonboot:
+                description: If true, wait for interface to come up before booting
+                type: bool
+                required: true
+              allow:
+                description: Subsystem the interface should be brought up by (ifupdown only)
+                type: str
+              dns_nameservers:
+                description: List of DNS resolver IP addresses
+                type: list
+                elements: str
+              dns_search:
+                description: List of DNS search domains
+                type: list
+                elements: str
+              mtu:
+                description: Interface MTU
+                type: int
+              bridge_ports:
+                description: Interfaces to add to bridge
+                type: list
+                elements: str
+              bridge_waitport:
+                description: Time in seconds to wait for bridge ports to come up
+                type: int
+              access_points:
+                description: List of wireless networks to configure
+                type: list
+                elements: dict
+                options:
+                  ssid:
+                    description: SSID
+                    type: str
+                  key-management:
+                    description: Key management mode
+                    type: str
+                    default: psk
+                    choices:
+                      - none
+                      - psk
+                      - eap
+                  password:
+                    description: The password string for EAP, or the pre-shared key for WPA-PSK
+                    type: str
+                  phase2-auth:
+                    description: The phase 2 auth mechanism
+                    type: str
+                  method:
+                    description: The EAP method to use
+                    type: str
+                    choices:
+                      - tls
+                      - peap
+                      - ttls
+                  identity:
+                    description: The identity to use for EAP
+                    type: str
+              families:
+                description: List of IP address families to configure
+                type: list
+                elements: dict
+                options:
+                  name:
+                    description: IP address family
+                    type: str
+                    required: true
+                    choices:
+                      - ipv4
+                      - ipv6
+                  type:
+                    description: IP address autoconfiguration source
+                    type: str
+                    required: true
+                    choices:
+                      - static
+                      - dhcp
+                      - auto
+                      - manual
+                  address:
+                    description: Static IP address for interface
+                    type: str
+                  gateway:
+                    description: Default gateway
+                    type: str
