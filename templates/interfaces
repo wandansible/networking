@@ -79,7 +79,7 @@ iface {{ interface['name'] }} {{ 'inet6' if family['name'] == 'ipv6' else 'inet'
   wpa-key-mgmt WPA-EAP
   wpa-eap {{ ap['method'] | upper }}
               {% if 'phase2-auth' in ap %}
-  wpa-phase2 "auth={{ ap['phase2'] | upper }}"
+  wpa-phase2 "auth={{ ap['phase2-auth'] | upper }}"
               {% endif %}
   wpa-identity {{ ap['identity'] }}
   wpa-password {{ ap['password'] }}
