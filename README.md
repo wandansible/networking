@@ -324,8 +324,11 @@ Example Playbook
                  vlans:
                    - id: 2405
                      waitonboot: true
-                     dns_nameservers: "8.8.8.8 8.8.4.4"
-                     dns_search: "example.org"
+                     dns_nameservers:
+                       - "8.8.8.8"
+                       - "8.8.4.4"
+                     dns_search:
+                       - "example.org"
                      families:
                        - name: ipv4
                          type: static
