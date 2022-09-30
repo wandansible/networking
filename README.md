@@ -4,6 +4,11 @@ Ansible role: Networking
 Configure and apply networking interface configuration (including VLANs, and WiFi)
 with either ifupdown or netplan depending on which is installed on the host system.
 
+Requirements
+------------
+
+To use this role, the python package `netaddr` must be installed on the host running ansible.
+
 Role Variables
 --------------
 
