@@ -1,0 +1,28 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: "Disable /etc/resolv.conf symlink created by resolvconf"
+      ansible.builtin.debconf:
+        name: "resolvconf"
+        question: "resolvconf/linkify-resolvconf"
+        value: false
+        vtype: "boolean"
+
+    - name: "Install ifupdown on Debian"
+      ansible.builtin.apt:
+        pkg:
+          - "ifupdown"
+      when: ansible_distribution == "Debian"
+
+    - name: "Install netplan on Ubuntu"
+      ansible.builtin.apt:
+        pkg:
+          - "udev"
+          - "netplan.io"
+      when: ansible_distribution == "Ubuntu"
+
+    - name: "Add virtual network interface"
+      ansible.builtin.command: "ip tuntap add eno1 mode tap"
+      args:
+        creates: "/sys/class/net/eno1"
