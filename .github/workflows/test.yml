@@ -35,6 +35,8 @@ jobs:
         run: pip3 install -r requirements.txt
       - name: Install test dependencies
         run: pip3 install -r test-requirements.txt
+      - name: Create resolv.conf temp file for docker
+        run: cp /etc/resolv.conf /var/tmp/
       - name: Run molecule
         run: molecule test
         env:

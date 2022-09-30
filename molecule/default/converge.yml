@@ -2,13 +2,6 @@
 - name: Prepare
   hosts: all
   tasks:
-    - name: "Disable /etc/resolv.conf symlink created by resolvconf"
-      ansible.builtin.debconf:
-        name: "resolvconf"
-        question: "resolvconf/linkify-resolvconf"
-        value: false
-        vtype: "boolean"
-
     - name: "Install ifupdown on Debian"
       ansible.builtin.apt:
         pkg:

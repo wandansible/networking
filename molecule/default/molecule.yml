@@ -11,6 +11,7 @@ platforms:
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/tmp/resolv.conf:/etc/resolv.conf
 provisioner:
   name: ansible
   log: true
