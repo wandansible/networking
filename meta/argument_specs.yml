@@ -216,3 +216,40 @@ argument_specs:
                   gateway:
                     description: Default gateway
                     type: str
+
+      network_tune:
+        description: If true, enable network tuning
+        type: bool
+        default: false
+
+      network_tune_interface:
+        description: |
+         Override the automatic detection of which network interface to use
+         for setting tuning values
+        type: str
+
+      network_tune_sysctls:
+        description: List of sysctls that should be applied for different interface speeds
+        type: list
+        elements: dict
+        options:
+          min_speed:
+            description: |
+              Minimum network interface speed (in megabits per second)
+              for which these sysctls should apply
+            type: int
+            required: true
+          sysctls:
+            description: List of sysctls to set
+            type: list
+            elements: dict
+            required: true
+            options:
+              key:
+                description: Name of sysctl
+                type: str
+                required: true
+              value:
+                description: Value of sysctl
+                type: str
+                required: true

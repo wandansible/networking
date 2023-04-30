@@ -37,3 +37,11 @@
   ansible.builtin.include_tasks:
     file: netplan.yml
   when: "check_for_netplan.stat.exists"
+
+- name: Set networking facts
+  ansible.builtin.import_tasks: facts.yml
+
+- name: Tune network options
+  ansible.builtin.include_tasks:
+    file: tuning.yml
+  when: network_tune

@@ -7,6 +7,9 @@
         name: "wandansible.networking"
       vars:
         network_wait_on_change: false
+
+        network_tune: true
+
         network_interfaces:
           - name: "eno1"
             waitonboot: true

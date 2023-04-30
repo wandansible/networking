@@ -276,6 +276,46 @@ OPTIONS (= is mandatory):
             If true, wait for interface to come up before booting
             type: bool
 
+- network_tune
+        If true, enable network tuning
+        default: false
+        type: bool
+
+- network_tune_interface
+        Override the automatic detection of which network interface to
+        use for setting tuning values
+        default: null
+        type: str
+
+- network_tune_sysctls
+        List of sysctls that should be applied for different interface
+        speeds
+        default: null
+        elements: dict
+        type: list
+
+        OPTIONS:
+
+        = min_speed
+            Minimum network interface speed (in megabits per second)
+            for which these sysctls should apply
+            type: int
+
+        = sysctls
+            List of sysctls to set
+            elements: dict
+            type: list
+
+            OPTIONS:
+
+            = key
+                Name of sysctl
+                type: str
+
+            = value
+                Value of sysctl
+                type: str
+
 - network_wait_on_change
         If true, wait for user to accept any network configuration
         changes before continuing and applying the changes
