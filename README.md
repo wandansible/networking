@@ -23,17 +23,18 @@ OPTIONS (= is mandatory):
 
 - netplan_renderer
         Networking backend to use for netplan
-        (Choices: networkd, NetworkManager, sriov)[Default: networkd]
+        choices: [networkd, NetworkManager, sriov]
+        default: networkd
         type: str
 
 - network_dad_attempts
         Number of attempts to settle DAD (0 to disable DAD)
-        [Default: 100]
+        default: 100
         type: int
 
 - network_interfaces
         List of network interfaces to configure
-        [Default: (null)]
+        default: null
         elements: dict
         type: list
 
@@ -41,7 +42,7 @@ OPTIONS (= is mandatory):
 
         - access_points
             List of wireless networks to configure
-            [Default: (null)]
+            default: null
             elements: dict
             type: list
 
@@ -49,67 +50,69 @@ OPTIONS (= is mandatory):
 
             - identity
                 The identity to use for EAP
-                [Default: (null)]
+                default: null
                 type: str
 
             - key-management
                 Key management mode
-                (Choices: none, psk, eap)[Default: psk]
+                choices: [none, psk, eap]
+                default: psk
                 type: str
 
             - method
                 The EAP method to use
-                (Choices: tls, peap, ttls)[Default: (null)]
+                choices: [tls, peap, ttls]
+                default: null
                 type: str
 
             - password
                 The password string for EAP, or the pre-shared key for
                 WPA-PSK
-                [Default: (null)]
+                default: null
                 type: str
 
             - phase2-auth
                 The phase 2 auth mechanism
-                [Default: (null)]
+                default: null
                 type: str
 
             - ssid
                 SSID
-                [Default: (null)]
+                default: null
                 type: str
 
         - allow
             Subsystem the interface should be brought up by (ifupdown
             only)
-            [Default: (null)]
+            default: null
             type: str
 
         - bridge_ports
             Interfaces to add to bridge
-            [Default: (null)]
+            default: null
             elements: str
             type: list
 
         - bridge_waitport
             Time in seconds to wait for bridge ports to come up
-            [Default: (null)]
+            default: null
             type: int
 
         - dns_nameservers
             List of DNS resolver IP addresses
-            [Default: (null)]
+            default: null
             elements: str
             type: list
 
         - dns_search
             List of DNS search domains
-            [Default: (null)]
+            default: null
             elements: str
             type: list
 
         - families
             List of IP address families to configure
-            [Default: (null)]
+            default: null
             elements: dict
             type: list
 
@@ -117,43 +120,42 @@ OPTIONS (= is mandatory):
 
             - address
                 Static IP address for interface
-                [Default: (null)]
+                default: null
                 type: str
 
             - gateway
                 Default gateway
-                [Default: (null)]
+                default: null
                 type: str
 
             = name
                 IP address family
-                (Choices: ipv4, ipv6)
+                choices: [ipv4, ipv6]
                 type: str
 
             = type
                 IP address autoconfiguration source
-                (Choices: static, dhcp, auto, manual)
+                choices: [static, dhcp, auto, manual]
                 type: str
 
         - match_mac
             Apply configuration by matching MAC address instead of
             interface name (netplan only)
-            [Default: (null)]
+            default: null
             type: str
 
         - mtu
             Interface MTU
-            [Default: (null)]
+            default: null
             type: int
 
         = name
             Interface name
-
             type: str
 
         - vlans
             List of VLAN interfaces to configure
-            [Default: (null)]
+            default: null
             elements: dict
             type: list
 
@@ -161,7 +163,7 @@ OPTIONS (= is mandatory):
 
             - access_points
                 List of wireless networks to configure
-                [Default: (null)]
+                default: null
                 elements: dict
                 type: list
 
@@ -169,67 +171,69 @@ OPTIONS (= is mandatory):
 
                 - identity
                     The identity to use for EAP
-                    [Default: (null)]
+                    default: null
                     type: str
 
                 - key-management
                     Key management mode
-                    (Choices: none, psk, eap)[Default: psk]
+                    choices: [none, psk, eap]
+                    default: psk
                     type: str
 
                 - method
                     The EAP method to use
-                    (Choices: tls, peap, ttls)[Default: (null)]
+                    choices: [tls, peap, ttls]
+                    default: null
                     type: str
 
                 - password
                     The password string for EAP, or the pre-shared key
                     for WPA-PSK
-                    [Default: (null)]
+                    default: null
                     type: str
 
                 - phase2-auth
                     The phase 2 auth mechanism
-                    [Default: (null)]
+                    default: null
                     type: str
 
                 - ssid
                     SSID
-                    [Default: (null)]
+                    default: null
                     type: str
 
             - allow
                 Subsystem the interface should be brought up by
                 (ifupdown only)
-                [Default: (null)]
+                default: null
                 type: str
 
             - bridge_ports
                 Interfaces to add to bridge
-                [Default: (null)]
+                default: null
                 elements: str
                 type: list
 
             - bridge_waitport
                 Time in seconds to wait for bridge ports to come up
-                [Default: (null)]
+                default: null
                 type: int
 
             - dns_nameservers
                 List of DNS resolver IP addresses
-                [Default: (null)]
+                default: null
                 elements: str
                 type: list
 
             - dns_search
                 List of DNS search domains
-                [Default: (null)]
+                default: null
                 elements: str
                 type: list
 
             - families
                 List of IP address families to configure
-                [Default: (null)]
+                default: null
                 elements: dict
                 type: list
 
@@ -237,48 +241,45 @@ OPTIONS (= is mandatory):
 
                 - address
                     Static IP address for interface
-                    [Default: (null)]
+                    default: null
                     type: str
 
                 - gateway
                     Default gateway
-                    [Default: (null)]
+                    default: null
                     type: str
 
                 = name
                     IP address family
-                    (Choices: ipv4, ipv6)
+                    choices: [ipv4, ipv6]
                     type: str
 
                 = type
                     IP address autoconfiguration source
-                    (Choices: static, dhcp, auto, manual)
+                    choices: [static, dhcp, auto, manual]
                     type: str
 
             = id
                 VLAN ID
-
                 type: int
 
             - mtu
                 Interface MTU
-                [Default: (null)]
+                default: null
                 type: int
 
             = waitonboot
                 If true, wait for interface to come up before booting
-
                 type: bool
 
         = waitonboot
             If true, wait for interface to come up before booting
-
             type: bool
 
 - network_wait_on_change
         If true, wait for user to accept any network configuration
         changes before continuing and applying the changes
-        [Default: True]
+        default: true
         type: bool
 ```
 
@@ -303,80 +304,80 @@ Example Playbook
 
     - hosts: all
       roles:
-         - role: wandansible.networking
-           become: true
-           vars:
-             network_interfaces:
-               - name: "eno1"
-                 waitonboot: true
-                 families:
-                   - name: ipv4
-                     type: dhcp
-                   - name: ipv6
-                     type: auto
+        - role: wandansible.networking
+          become: true
+          vars:
+            network_interfaces:
+              - name: "eno1"
+                waitonboot: true
+                families:
+                  - name: ipv4
+                    type: dhcp
+                  - name: ipv6
+                    type: auto
 
     - hosts: complex_host
       roles:
-         - role: wandansible.networking
-           become: true
-           vars:
-             network_interfaces:
-               - name: eno1
-                 waitonboot: true
-                 families:
-                   - name: ipv4
-                     type: manual
-                 vlans:
-                   - id: 2405
-                     waitonboot: true
-                     dns_nameservers:
-                       - "8.8.8.8"
-                       - "8.8.4.4"
-                     dns_search:
-                       - "example.org"
-                     families:
-                       - name: ipv4
-                         type: static
-                         address: "192.0.2.1/24"
-                         gateway: "192.0.2.254"
-                       - name: ipv6
-                         type: static
-                         address: "2001:db8::1/64"
-                         gateway: "2001:db8::ffff"
-               - name: eno2
-                 waitonboot: false
-                 families:
-                   - name: ipv4
-                     type: static
-                     address: "192.168.0.1/24"
+        - role: wandansible.networking
+          become: true
+          vars:
+            network_interfaces:
+              - name: eno1
+                waitonboot: true
+                families:
+                  - name: ipv4
+                    type: manual
+                vlans:
+                  - id: 2405
+                    waitonboot: true
+                    dns_nameservers:
+                      - "8.8.8.8"
+                      - "8.8.4.4"
+                    dns_search:
+                      - "example.org"
+                    families:
+                      - name: ipv4
+                        type: static
+                        address: "192.0.2.1/24"
+                        gateway: "192.0.2.254"
+                      - name: ipv6
+                        type: static
+                        address: "2001:db8::1/64"
+                        gateway: "2001:db8::ffff"
+              - name: eno2
+                waitonboot: false
+                families:
+                  - name: ipv4
+                    type: static
+                    address: "192.168.0.1/24"
 
     - hosts: wifi_host
       roles:
-         - role: wandansible.networking
-           become: true
-           vars:
-             network_interfaces:
-               - name: "wlan0"
-                 waitonboot: false
-                 families:
-                   - name: ipv4
-                     type: dhcp
-                   - name: ipv6
-                     type: auto
-                 access_points:
-                    - ssid: "open-with-password"
-                      password: "presharedkey123"
-               - name: "wlan1"
-                 waitonboot: false
-                 families:
-                   - name: ipv4
-                     type: dhcp
-                   - name: ipv6
-                     type: auto
-                 access_points:
-                    - ssid: "more-auth-required"
-                      key-management: "eap"
-                      method: "peap"
-                      phase2-auth: "MSCHAPV2"
-                      identity: "user@institution"
-                      password: "password123"
+        - role: wandansible.networking
+          become: true
+          vars:
+            network_interfaces:
+              - name: "wlan0"
+                waitonboot: false
+                families:
+                  - name: ipv4
+                    type: dhcp
+                  - name: ipv6
+                    type: auto
+                access_points:
+                   - ssid: "open-with-password"
+                     password: "presharedkey123"
+              - name: "wlan1"
+                waitonboot: false
+                families:
+                  - name: ipv4
+                    type: dhcp
+                  - name: ipv6
+                    type: auto
+                access_points:
+                   - ssid: "more-auth-required"
+                     key-management: "eap"
+                     method: "peap"
+                     phase2-auth: "MSCHAPV2"
+                     identity: "user@institution"
+                     password: "password123"
