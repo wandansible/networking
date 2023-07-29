@@ -11,6 +11,6 @@
     speed_sysctls: >-
       {{ network_tune_sysctls
          | sort(attribute='min_speed')
-         | selectattr('min_speed', 'le', network_max_speed | int)
+         | selectattr('min_speed', 'le', network_max_speed)
          | map(attribute='sysctls')
          | last }}
