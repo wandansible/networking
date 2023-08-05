@@ -83,6 +83,7 @@ argument_specs:
               password:
                 description: The password string for EAP, or the pre-shared key for WPA-PSK
                 type: str
+                no_log: true
               phase2-auth:
                 description: The phase 2 auth mechanism
                 type: str
@@ -176,6 +177,7 @@ argument_specs:
                   password:
                     description: The password string for EAP, or the pre-shared key for WPA-PSK
                     type: str
+                    no_log: true
                   phase2-auth:
                     description: The phase 2 auth mechanism
                     type: str
