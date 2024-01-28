@@ -11,6 +11,34 @@
     install_recommends: false
   when: "network_interfaces | selectattr('access_points', 'defined') | list"
 
+- name: Install wireless-regdb if wireless interfaces are configured
+  ansible.builtin.apt:
+    pkg:
+      - wireless-regdb
+    install_recommends: false
+  register: _wireless_regdb_install
+  when: "network_interfaces | selectattr('access_points', 'defined') | list"
+
+- name: Reload wireless regulatory database
+  ansible.builtin.command:
+    cmd: "iw reg reload"
+  when: _wireless_regdb_install.changed
+
+- name: Configure wireless regulatory country
+  when: wireless_regulatory_country != ""
+  block:
+    - name: Configure wireless regulatory country on boot
+      ansible.builtin.template:
+        src: "cfg80211.conf"
+        dest: "{{ network_kernel_options_config_file }}"
+        mode: "u=rw,g=r,o=r"
+      register: _cfg80211_config
+
+    - name: Set wireless regulatory country
+      ansible.builtin.command:
+        cmd: "iw reg set {{ wireless_regulatory_country }}"
+      when: _cfg80211_config.changed
+
 - name: Get enabled wireless devices
   ansible.builtin.set_fact:
     enabled_wireless_devices: >-
