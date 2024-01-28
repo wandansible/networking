@@ -2,9 +2,12 @@
 network_interfaces: []
 network_dad_attempts: 100
 
+network_kernel_options_config_file: "/etc/modprobe.d/zz-ansible-network-options.conf"
+
 wireless_packages:
   - iw
   - wpasupplicant
+wireless_regulatory_country: ""
 
 netplan_renderer: networkd
 

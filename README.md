@@ -277,6 +277,11 @@ OPTIONS (= is mandatory):
             If true, wait for interface to come up before booting
             type: bool
 
+- network_kernel_options_config_file
+        Path for the file containing networking kernel modules options
+        default: /etc/modprobe.d/zz-ansible-network-options.conf
+        type: str
+
 - network_tune
         If true, enable network tuning
         default: false
@@ -329,6 +334,12 @@ OPTIONS (= is mandatory):
         default: [iw, wpasupplicant]
         elements: str
         type: list
+
+- wireless_regulatory_country
+        ISO/IEC 3166-1 alpha2 country code to use for wireless
+        regulatory domain, or empty string to not configure
+        default: ''
+        type: str
 ```
 
 Installation

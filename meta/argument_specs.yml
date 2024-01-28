@@ -11,6 +11,11 @@ argument_specs:
         type: int
         default: 100
 
+      network_kernel_options_config_file:
+        description: Path for the file containing networking kernel modules options
+        type: str
+        default: /etc/modprobe.d/zz-ansible-network-options.conf
+
       netplan_renderer:
         description: Networking backend to use for netplan
         type: str
@@ -263,3 +268,10 @@ argument_specs:
         default:
           - iw
           - wpasupplicant
+
+      wireless_regulatory_country:
+        description: |
+          ISO/IEC 3166-1 alpha2 country code to use for wireless regulatory domain,
+          or empty string to not configure
+        type: str
+        default: ""
