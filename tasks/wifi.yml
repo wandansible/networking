@@ -1,8 +1,9 @@
 ---
-
-# Using /sys interface to rfkill rather than rfkill command directly as it
+# Using /sys interface for rfkill rather than rfkill command directly as it
 # seemed easier to parse:
 #     https://www.kernel.org/doc/Documentation/ABI/stable/sysfs-class-rfkill
+#
+# Persistence for rfkill config is provided by systemd-rfkill
 
 - name: Install wpasupplicant if wireless interfaces are configured
   ansible.builtin.apt:
@@ -11,76 +12,66 @@
     state: present
   when: "network_interfaces | selectattr('access_points', 'defined') | list"
 
-# Only looking at 802.11 wireless interfaces, not bluetooth etc
-- name: Enumerate all wireless devices
-  ansible.builtin.shell: |
-    set -eo pipefail
-    cat /sys/class/ieee80211/phy*/rfkill*/index | sort | uniq
-    ip -all netns exec bash -c "cat /sys/class/ieee80211/phy*/rfkill*/index | sort | uniq" \
-      | grep -v netns | grep -v "^$" || true
-  args:
-    executable: /bin/bash
-  register: wireless_devices
-  changed_when: false
-
-# This isn't always a one-to-one mapping, as it's possible for one wireless
-# device to support multiple interfaces (e.g. AP and managed)
-- name: Determine wireless devices used by configured interfaces
-  ansible.builtin.shell: |
-    set -eo pipefail
-    cat /sys/class/net/{{ item.name }}/phy80211/rfkill*/index \
-      || ip -all netns exec bash -c "cat /sys/class/net/{{ item.name }}/phy80211/rfkill*/index" \
-           | grep -v netns | grep -v "^$"
-  args:
-    executable: /bin/bash
-  register: configured_wireless_devices
-  loop: "{{ network_interfaces | selectattr('access_points', 'defined') | list }}"
-  changed_when: false
-
-# Turn the output into a list of devices used by configured interfaces
-- name: Build configured wireless devices list
+- name: Get enabled wireless devices
   ansible.builtin.set_fact:
-    wireless_configured_devices: "{{ configured_wireless_devices.results | map(attribute='stdout_lines') | sum(start=[]) | map('int') | unique | list }}"
+    enabled_wireless_devices: >-
+      {{ network_interfaces | selectattr('access_points', 'defined') | map(attribute="name")
+         | intersect(wireless_devices) }}
 
-# Devices can be blocked or unblocked in software
-- name: Get current state of all wireless devices
-  ansible.builtin.shell: |
-    set -eo pipefail
-    echo {{ item }}: $(cat /sys/class/ieee80211/phy*/rfkill{{ item }}/soft \
-      || ip -all netns exec bash -c "cat /sys/class/ieee80211/phy*/rfkill{{ item }}/soft" \
-           | grep -v netns | grep -v "^$")
-  args:
-    executable: /bin/bash
-  register: wireless_softblock
-  loop: "{{ wireless_devices.stdout_lines }}"
-  changed_when: false
-
-# Need a dictionary of {device: status} so we can lookup each device to see if
-# the software blocked state needs changing
-- name: Build softblocked wireless devices table
+- name: Get disabled wireless devices
   ansible.builtin.set_fact:
-    wireless_softblock_devices: "{{ wireless_softblock.results | map(attribute='stdout_lines') | list | sum(start=[]) | unique | join('\n') | from_yaml }}"
+    disabled_wireless_devices: >-
+      {{ wireless_devices | difference(enabled_wireless_devices) }}
 
-# Unblock every configured device that is currently soft blocked
-- name: Unblock devices with configured wireless interfaces
+- name: Get desired rfkill software block state
+  ansible.builtin.set_fact:
+    _rfkill_state: >-
+      {{ (
+           enabled_wireless_devices
+           | community.general.json_query("[].{name: @, value: '0'}")
+         ) + (
+           disabled_wireless_devices
+           | community.general.json_query("[].{name: @, value: '1'}")
+         ) }}
+
+- name: Set rfkill software block state
   ansible.builtin.shell: |
-    set -eo pipefail
-    (echo 0 | tee /sys/class/ieee80211/phy*/rfkill{{ item }}/soft) \
-      || (ip -all netns exec bash -c "echo 0 | tee /sys/class/ieee80211/phy*/rfkill{{ item }}/soft")
+    set -euo pipefail
+
+    if [ -d "/sys/class/net/{{ item.name }}/phy80211" ]; then
+      while read -r rfkill_dir; do
+        if [ "$(cat "${rfkill_dir}/soft")" != "{{ item.value }}" ]; then
+            echo "{{ item.value }}" | tee "${rfkill_dir}/soft"
+            echo "{{ item.name }} state changed to {{ item.value }}"
+        fi
+      done <<< "$(find /sys/class/net/{{ item.name }}/phy80211/ -maxdepth 1 -name "rfkill*")"
+    fi
   args:
     executable: /bin/bash
-  when: wireless_softblock_devices[item] == 1
-  loop: "{{ wireless_configured_devices }}"
+  register: _configure_rfkill
+  changed_when: "'changed' in _configure_rfkill.stdout"
+  loop: "{{ _rfkill_state }}"
+  loop_control:
+    label: "{{ item.name }}={{ 'blocked' if item.value == '1' else 'unblocked' }}"
 
-# Soft block every unconfigured device that is currently unblocked
-- name: Block devices without configured wireless interfaces
+- name: Set rfkill software block state in network namespaces
   ansible.builtin.shell: |
-    set -eo pipefail
-    (echo 1 | tee /sys/class/ieee80211/phy*/rfkill{{ item }}/soft) \
-      || (ip -all netns exec bash -c "echo 1 | tee /sys/class/ieee80211/phy*/rfkill{{ item }}/soft")
+    set -euo pipefail
+
+    ip -all netns exec bash -c '
+      if [ -d "/sys/class/net/{{ item.name }}/phy80211" ]; then
+        while read -r rfkill_dir; do
+          if [ "$(cat "${rfkill_dir}/soft")" != "{{ item.value }}" ]; then
+              echo "{{ item.value }}" | tee "${rfkill_dir}/soft"
+              echo "{{ item.name }} state changed to {{ item.value }}"
+          fi
+        done <<< "$(find /sys/class/net/{{ item.name }}/phy80211/ -maxdepth 1 -name "rfkill*")"
+      fi'
   args:
     executable: /bin/bash
-  when:
-    - item not in wireless_configured_devices
-    - wireless_softblock_devices[item] == 0
-  loop: "{{ wireless_devices.stdout_lines | map('int') | list }}"
+  when: "network_namespaces | length >= 1"
+  register: _netns_configure_rfkill
+  changed_when: "'changed' in _netns_configure_rfkill.stdout"
+  loop: "{{ _rfkill_state }}"
+  loop_control:
+    label: "{{ item.name }}={{ 'blocked' if item.value == '1' else 'unblocked' }}"
