@@ -1,8 +1,22 @@
 ---
-- name: confirm network change
-  ansible.builtin.pause:
-    prompt: Please check the network configuration changes. Press enter to apply or ctrl-c to stop
+- name: Get current network state
+  ansible.builtin.command:
+    cmd: ip address show
+  register: _network_state
+  changed_when: false
   when: network_wait_on_change
+  listen: confirm network change
+
+- name: Prompt before changing network configuration
+  ansible.builtin.pause:
+    prompt: |-
+      Current network state:
+
+      {{ _network_state.stdout }}
+
+      Please check the network configuration changes. Press enter to apply or ctrl-c to stop
+  when: network_wait_on_change
+  listen: confirm network change
 
 - name: restart networking
   ansible.builtin.service:
