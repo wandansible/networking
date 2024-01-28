@@ -12,21 +12,61 @@
     path: /usr/sbin/netplan
   register: check_for_netplan
 
-- name: Check if this device has any wireless interfaces
-  ansible.builtin.shell: |
-    set -eo pipefail
-    find /sys/class/ieee80211/ -type l
-    ip -all netns exec find /sys/class/ieee80211/ -type l | grep "/sys/class/ieee80211/"
+- name: Get wireless devices
+  ansible.builtin.shell: >-
+    set -euo pipefail
+
+    while read -r iface_dir; do
+      if [ -e "${iface_dir}/phy80211" ]; then
+        basename "${iface_dir}"
+      fi
+    done <<< "$(find /sys/class/net/ -mindepth 1 -maxdepth 2)"
   args:
     executable: /bin/bash
-  register: check_for_wireless
   changed_when: false
-  failed_when: false
+  register: _wireless_device_paths
+
+- name: Get network namespaces
+  ansible.builtin.find:
+    paths: /run/netns/
+  register: _network_namespace_dirs
+
+- name: Set network namespaces fact
+  ansible.builtin.set_fact:
+    network_namespaces: >-
+      {{ _network_namespace_dirs.files | map(attribute="path") | map("basename") }}
+
+- name: Get wireless devices in network namespaces
+  ansible.builtin.shell: >-
+    set -euo pipefail
+
+    ip netns exec "{{ item }}" bash -c '
+      set -euo pipefail
+
+      while read -r iface_dir; do
+        if [ -e "${iface_dir}/phy80211" ]; then
+          basename "${iface_dir}"
+        fi
+      done <<< "$(find /sys/class/net/ -mindepth 1 -maxdepth 2)"'
+  args:
+    executable: /bin/bash
+  loop: "{{ network_namespaces }}"
+  changed_when: false
+  register: _netns_wireless_device_path_cmd
+
+- name: Set wireless device facts
+  ansible.builtin.set_fact:
+    wireless_devices: >-
+      {{ (
+           _wireless_device_paths.stdout_lines
+           +
+           (_netns_wireless_device_path_cmd.results | map(attribute="stdout_lines") | flatten)
+         ) | map("basename") | sort }}
 
 - name: Configure wireless devices
   ansible.builtin.include_tasks:
     file: wifi.yml
-  when: "check_for_wireless.stdout_lines | length > 0"
+  when: "wireless_devices | length > 0"
 
 - name: Configure networking interfaces with ifupdown
   ansible.builtin.include_tasks:

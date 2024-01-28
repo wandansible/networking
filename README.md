@@ -7,7 +7,8 @@ with either ifupdown or netplan depending on which is installed on the host syst
 Requirements
 ------------
 
-To use this role, the python package `netaddr` must be installed on the host running ansible.
+To use this role, the python packages `netaddr` and `jmespath` must be installed on the host
+running ansible.
 
 Role Variables
 --------------
