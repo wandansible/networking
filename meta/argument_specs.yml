@@ -255,3 +255,11 @@ argument_specs:
                 description: Value of sysctl
                 type: str
                 required: true
+
+      wireless_packages:
+        description: List of packages to install when there are wireless network devices present
+        type: list
+        elements: str
+        default:
+          - iw
+          - wpasupplicant
