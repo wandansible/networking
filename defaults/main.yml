@@ -2,6 +2,10 @@
 network_interfaces: []
 network_dad_attempts: 100
 
+wireless_packages:
+  - iw
+  - wpasupplicant
+
 netplan_renderer: networkd
 
 network_wait_on_change: true

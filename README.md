@@ -322,6 +322,13 @@ OPTIONS (= is mandatory):
         changes before continuing and applying the changes
         default: true
         type: bool
+
+- wireless_packages
+        List of packages to install when there are wireless network
+        devices present
+        default: [iw, wpasupplicant]
+        elements: str
+        type: list
 ```
 
 Installation

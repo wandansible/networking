@@ -5,10 +5,9 @@
 #
 # Persistence for rfkill config is provided by systemd-rfkill
 
-- name: Install wpasupplicant if wireless interfaces are configured
+- name: Install wireless packages if wireless interfaces are configured
   ansible.builtin.apt:
-    pkg:
-      - wpasupplicant
+    pkg: "{{ wireless_packages }}"
     install_recommends: false
   when: "network_interfaces | selectattr('access_points', 'defined') | list"
 
