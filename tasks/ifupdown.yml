@@ -5,7 +5,7 @@
     pkg:
       - resolvconf
       - vlan
-    state: present
+    install_recommends: false
 
 - name: Configure ifupdown network interfaces
   ansible.builtin.template:
