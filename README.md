@@ -70,6 +70,7 @@ OPTIONS (= is mandatory):
                 The password string for EAP, or the pre-shared key for
                 WPA-PSK
                 default: null
+                no_log: true
                 type: str
 
             - phase2-auth
@@ -191,6 +192,7 @@ OPTIONS (= is mandatory):
                     The password string for EAP, or the pre-shared key
                     for WPA-PSK
                     default: null
+                    no_log: true
                     type: str
 
                 - phase2-auth
