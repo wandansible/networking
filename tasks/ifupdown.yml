@@ -3,6 +3,7 @@
 - name: Install extra ifupdown2 helpers
   ansible.builtin.apt:
     pkg:
+      - rdnssd
       - resolvconf
       - vlan
     install_recommends: false
