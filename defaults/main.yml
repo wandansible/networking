@@ -9,6 +9,8 @@ wireless_packages:
   - wpasupplicant
 wireless_regulatory_country: ""
 
+network_ifupdown_config: ""
+
 netplan_renderer: networkd
 
 network_wait_on_change: true

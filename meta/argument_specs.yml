@@ -16,6 +16,13 @@ argument_specs:
         type: str
         default: /etc/modprobe.d/zz-ansible-network-options.conf
 
+      network_ifupdown_config:
+        description: |
+          Contents of the /etc/default/networking configuration file,
+          or empty string to leave file as is
+        type: str
+        default: ""
+
       netplan_renderer:
         description: Networking backend to use for netplan
         type: str

@@ -33,6 +33,12 @@ OPTIONS (= is mandatory):
         default: 100
         type: int
 
+- network_ifupdown_config
+        Contents of the /etc/default/networking configuration file, or
+        empty string to leave file as is
+        default: ''
+        type: str
+
 - network_interfaces
         List of network interfaces to configure
         default: null
