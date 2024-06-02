@@ -23,7 +23,6 @@ argument_specs:
         choices:
           - networkd
           - NetworkManager
-          - sriov
 
       network_wait_on_change:
         description: |

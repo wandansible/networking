@@ -24,7 +24,7 @@ OPTIONS (= is mandatory):
 
 - netplan_renderer
         Networking backend to use for netplan
-        choices: [networkd, NetworkManager, sriov]
+        choices: [networkd, NetworkManager]
         default: networkd
         type: str
 
