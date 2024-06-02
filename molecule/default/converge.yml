@@ -8,6 +8,8 @@
       vars:
         network_wait_on_change: false
 
+        network_systemd_wait_online: true
+
         network_tune: true
 
         network_interfaces:

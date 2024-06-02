@@ -45,3 +45,9 @@
     group: "root"
     mode: "u=rw,g=r,o=r"
   when: network_ifupdown_config != ""
+
+- name: Enable or disable ifupdown-wait-online systemd service
+  ansible.builtin.systemd:
+    name: "ifupdown-wait-online.service"
+    enabled: "true"
+  when: network_systemd_wait_online

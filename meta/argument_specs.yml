@@ -38,6 +38,12 @@ argument_specs:
         type: bool
         default: true
 
+      network_systemd_wait_online:
+        description: |
+          If true, enable appropriate network wait-online systemd service
+        type: bool
+        default: false
+
       network_interfaces:
         description: List of network interfaces to configure
         type: list

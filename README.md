@@ -290,6 +290,12 @@ OPTIONS (= is mandatory):
         default: /etc/modprobe.d/zz-ansible-network-options.conf
         type: str
 
+- network_systemd_wait_online
+        If true, enable appropriate network wait-online systemd
+        service
+        default: false
+        type: bool
+
 - network_tune
         If true, enable network tuning
         default: false

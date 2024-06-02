@@ -15,6 +15,8 @@ netplan_renderer: networkd
 
 network_wait_on_change: true
 
+network_systemd_wait_online: false
+
 # For more details on tuning, see: https://fasterdata.es.net/
 network_tune: false
 network_tune_sysctls:
