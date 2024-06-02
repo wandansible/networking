@@ -230,8 +230,8 @@ argument_specs:
 
       network_tune_interface:
         description: |
-         Override the automatic detection of which network interface to use
-         for setting tuning values
+          Override the automatic detection of which network interface to use
+          for setting tuning values
         type: str
 
       network_tune_sysctls:
