@@ -1,5 +1,4 @@
 ---
-
 - name: Install extra ifupdown2 helpers
   ansible.builtin.apt:
     pkg:
@@ -37,3 +36,18 @@
   notify:
     - confirm network change
     - restart networking
+
+- name: Configure /etc/default/networking
+  ansible.builtin.template:
+    src: "ifupdown"
+    dest: "/etc/default/networking"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=r,o=r"
+  when: network_ifupdown_config != ""
+
+- name: Enable or disable ifupdown-wait-online systemd service
+  ansible.builtin.systemd:
+    name: "ifupdown-wait-online.service"
+    enabled: "true"
+  when: network_systemd_wait_online

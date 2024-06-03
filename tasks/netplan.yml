@@ -1,5 +1,4 @@
 ---
-
 - name: Get existing netplan configuration files
   ansible.builtin.find:
     paths: /etc/netplan
@@ -41,3 +40,19 @@
   notify:
     - confirm network change
     - netplan apply
+
+- name: Enable or disable systemd-networkd-wait-online systemd service
+  ansible.builtin.systemd:
+    name: "systemd-networkd-wait-online.service"
+    enabled: "true"
+  when:
+    - network_systemd_wait_online
+    - netplan_renderer == "networkd"
+
+- name: Enable or disable NetworkManager-wait-online systemd service
+  ansible.builtin.systemd:
+    name: "NetworkManager-wait-online.service"
+    enabled: "true"
+  when:
+    - network_systemd_wait_online
+    - netplan_renderer == "NetworkManager"

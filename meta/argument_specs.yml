@@ -16,6 +16,13 @@ argument_specs:
         type: str
         default: /etc/modprobe.d/zz-ansible-network-options.conf
 
+      network_ifupdown_config:
+        description: |
+          Contents of the /etc/default/networking configuration file,
+          or empty string to leave file as is
+        type: str
+        default: ""
+
       netplan_renderer:
         description: Networking backend to use for netplan
         type: str
@@ -23,7 +30,6 @@ argument_specs:
         choices:
           - networkd
           - NetworkManager
-          - sriov
 
       network_wait_on_change:
         description: |
@@ -31,6 +37,12 @@ argument_specs:
           and applying the changes
         type: bool
         default: true
+
+      network_systemd_wait_online:
+        description: |
+          If true, enable appropriate network wait-online systemd service
+        type: bool
+        default: false
 
       network_interfaces:
         description: List of network interfaces to configure
@@ -231,8 +243,8 @@ argument_specs:
 
       network_tune_interface:
         description: |
-         Override the automatic detection of which network interface to use
-         for setting tuning values
+          Override the automatic detection of which network interface to use
+          for setting tuning values
         type: str
 
       network_tune_sysctls:

@@ -24,7 +24,7 @@ OPTIONS (= is mandatory):
 
 - netplan_renderer
         Networking backend to use for netplan
-        choices: [networkd, NetworkManager, sriov]
+        choices: [networkd, NetworkManager]
         default: networkd
         type: str
 
@@ -32,6 +32,12 @@ OPTIONS (= is mandatory):
         Number of attempts to settle DAD (0 to disable DAD)
         default: 100
         type: int
+
+- network_ifupdown_config
+        Contents of the /etc/default/networking configuration file, or
+        empty string to leave file as is
+        default: ''
+        type: str
 
 - network_interfaces
         List of network interfaces to configure
@@ -283,6 +289,12 @@ OPTIONS (= is mandatory):
         Path for the file containing networking kernel modules options
         default: /etc/modprobe.d/zz-ansible-network-options.conf
         type: str
+
+- network_systemd_wait_online
+        If true, enable appropriate network wait-online systemd
+        service
+        default: false
+        type: bool
 
 - network_tune
         If true, enable network tuning
