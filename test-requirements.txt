@@ -1,4 +1,3 @@
 ansible
 molecule
 molecule-plugins[docker]
-requests<=2.32.0
