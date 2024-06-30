@@ -33,6 +33,28 @@ OPTIONS (= is mandatory):
         default: 100
         type: int
 
+- network_hooks
+        List of network hook scripts to run when interfaces change
+        state
+        default: null
+        elements: dict
+        type: list
+
+        OPTIONS:
+
+        = hook
+            Contents of network hook script
+            type: str
+
+        = name
+            Name of network hook
+            type: str
+
+        = phase
+            Interface phase to run hook script
+            choices: [pre-up, up, down, post-down]
+            type: str
+
 - network_ifupdown_config
         Contents of the /etc/default/networking configuration file, or
         empty string to leave file as is
