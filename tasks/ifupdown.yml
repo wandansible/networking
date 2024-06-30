@@ -37,6 +37,21 @@
     - confirm network change
     - restart networking
 
+- name: Configure ifupdown hooks
+  ansible.builtin.template:
+    src: "hook"
+    dest: >-
+      {{ "/etc/network/if-" + item.phase + ".d/" + item.name }}
+    owner: "root"
+    group: "root"
+    mode: "u=rwx,g=rx,o=rx"
+  loop: "{{ network_hooks }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify:
+    - confirm network change
+    - restart networking
+
 - name: Configure /etc/default/networking
   ansible.builtin.template:
     src: "ifupdown"

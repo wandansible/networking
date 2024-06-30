@@ -1,0 +1,6 @@
+---
+networkd_dispatcher_phase_map:
+  pre-up: "configuring"
+  up: "routable"
+  down: "off"
+  post-down: "off"

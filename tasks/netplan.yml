@@ -41,6 +41,30 @@
     - confirm network change
     - netplan apply
 
+- name: Install networkd-dispatcher
+  ansible.builtin.apt:
+    pkg:
+      - networkd-dispatcher
+    install_recommends: false
+  when: network_hooks | length >= 1
+
+- name: Configure networkd-dispatcher hooks
+  ansible.builtin.template:
+    src: "hook"
+    dest: >-
+      {{ "/etc/networkd-dispatcher/"
+         + networkd_dispatcher_phase_map[item.phase] + ".d/"
+         + item.name }}
+    owner: "root"
+    group: "root"
+    mode: "u=rwx,g=rx,o=rx"
+  loop: "{{ network_hooks }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify:
+    - confirm network change
+    - netplan apply
+
 - name: Enable or disable systemd-networkd-wait-online systemd service
   ansible.builtin.systemd:
     name: "systemd-networkd-wait-online.service"
