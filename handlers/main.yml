@@ -23,6 +23,11 @@
     name: networking.service
     state: restarted
 
+- name: restart ifupdown-wait-online
+  ansible.builtin.service:
+    name: ifupdown-wait-online.service
+    state: restarted
+
 - name: netplan apply
   ansible.builtin.command:
     cmd: netplan apply

@@ -60,6 +60,7 @@
     group: "root"
     mode: "u=rw,g=r,o=r"
   when: network_ifupdown_config != ""
+  notify: restart ifupdown-wait-online
 
 - name: Enable or disable ifupdown-wait-online systemd service
   ansible.builtin.systemd:
