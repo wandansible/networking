@@ -1,5 +1,5 @@
 ---
-- name: Install extra ifupdown2 helpers
+- name: Install extra ifupdown helpers
   ansible.builtin.apt:
     pkg:
       - rdnssd
