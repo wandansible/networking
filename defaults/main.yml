@@ -1,5 +1,6 @@
 ---
 network_interfaces: []
+network_hooks: []
 network_dad_attempts: 100
 
 network_kernel_options_config_file: "/etc/modprobe.d/zz-ansible-network-options.conf"

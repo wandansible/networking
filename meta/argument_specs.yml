@@ -236,6 +236,29 @@ argument_specs:
                     description: Default gateway
                     type: str
 
+      network_hooks:
+        description: List of network hook scripts to run when interfaces change state
+        type: list
+        elements: dict
+        options:
+          name:
+            description: Name of network hook
+            type: str
+            required: true
+          phase:
+            description: Interface phase to run hook script
+            type: str
+            required: true
+            choices:
+              - pre-up
+              - up
+              - down
+              - post-down
+          hook:
+            description: Contents of network hook script
+            type: str
+            required: true
+
       network_tune:
         description: If true, enable network tuning
         type: bool
