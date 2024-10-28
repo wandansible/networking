@@ -22,6 +22,11 @@ ENTRY POINT: *main* - Configure networking interfaces with ifupdown or netplan
 
 Options (= indicates it is required):
 
+- ifupdown_packages  List of extra helper packages to install for systems using ifupdown
+          default: [rdnssd, resolvconf, vlan]
+          elements: str
+          type: list
+
 - netplan_renderer  Networking backend to use for netplan
           choices: [networkd, NetworkManager]
           default: networkd

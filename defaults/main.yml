@@ -10,6 +10,10 @@ wireless_packages:
   - wpasupplicant
 wireless_regulatory_country: ""
 
+ifupdown_packages:
+  - rdnssd
+  - resolvconf
+  - vlan
 network_ifupdown_config: ""
 
 netplan_renderer: networkd
