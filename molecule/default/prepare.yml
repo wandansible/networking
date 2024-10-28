@@ -22,6 +22,12 @@
           - "netplan.io"
       when: ansible_distribution == "Ubuntu"
 
+    - name: "Start udev"
+      ansible.builtin.systemd:
+        name: "udev.service"
+        state: "started"
+      when: ansible_distribution == "Ubuntu"
+
     - name: "Add virtual network interface"
       ansible.builtin.command: "ip tuntap add eno1 mode tap"
       args:
