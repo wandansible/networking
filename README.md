@@ -14,368 +14,296 @@ Role Variables
 --------------
 
 ```
-ENTRY POINT: main - Configure networking interfaces with ifupdown or netplan
+ENTRY POINT: *main* - Configure networking interfaces with ifupdown or netplan
 
-        Configure and apply networking interface configuration
-        (including VLANs, and WiFi) with either ifupdown or netplan
-        depending on which is installed on the host system.
+          Configure and apply networking interface configuration
+          (including VLANs, and WiFi) with either ifupdown or netplan
+          depending on which is installed on the host system.
 
-OPTIONS (= is mandatory):
+Options (= indicates it is required):
 
-- netplan_renderer
-        Networking backend to use for netplan
-        choices: [networkd, NetworkManager]
-        default: networkd
-        type: str
+- netplan_renderer  Networking backend to use for netplan
+          choices: [networkd, NetworkManager]
+          default: networkd
+          type: str
 
-- network_dad_attempts
-        Number of attempts to settle DAD (0 to disable DAD)
-        default: 100
-        type: int
+- network_dad_attempts  Number of attempts to settle DAD (0 to disable DAD)
+          default: 100
+          type: int
 
-- network_hooks
-        List of network hook scripts to run when interfaces change
-        state
-        default: null
-        elements: dict
-        type: list
+- network_hooks  List of network hook scripts to run when interfaces change state
+          default: null
+          elements: dict
+          type: list
+          options:
 
-        OPTIONS:
-
-        = hook
-            Contents of network hook script
+          = hook            Contents of network hook script
             type: str
 
-        = name
-            Name of network hook
+          = name            Name of network hook
             type: str
 
-        = phase
-            Interface phase to run hook script
+          = phase            Interface phase to run hook script
             choices: [pre-up, up, down, post-down]
             type: str
 
-- network_ifupdown_config
-        Contents of the /etc/default/networking configuration file, or
-        empty string to leave file as is
-        default: ''
-        type: str
+- network_ifupdown_config  Contents of the /etc/default/networking configuration file, or empty
+                            string to leave file as is
+          default: ''
+          type: str
 
-- network_interfaces
-        List of network interfaces to configure
-        default: null
-        elements: dict
-        type: list
+- network_interfaces  List of network interfaces to configure
+          default: null
+          elements: dict
+          type: list
+          options:
 
-        OPTIONS:
-
-        - access_points
-            List of wireless networks to configure
+          - access_points            List of wireless networks to configure
             default: null
             elements: dict
             type: list
+            options:
 
-            OPTIONS:
+            - identity              The identity to use for EAP
+              default: null
+              type: str
 
-            - identity
-                The identity to use for EAP
+            - key-management              Key management mode
+              choices: [none, psk, eap]
+              default: psk
+              type: str
+
+            - method              The EAP method to use
+              choices: [tls, peap, ttls]
+              default: null
+              type: str
+
+            - password              The password string for EAP, or the pre-shared key for
+                         WPA-PSK
+              default: null
+              no_log: true
+              type: str
+
+            - phase2-auth              The phase 2 auth mechanism
+              default: null
+              type: str
+
+            - ssid              SSID
+              default: null
+              type: str
+
+          - allow            Subsystem the interface should be brought up by (ifupdown
+                    only)
+            default: null
+            type: str
+
+          - bridge_ports            Interfaces to add to bridge
+            default: null
+            elements: str
+            type: list
+
+          - bridge_waitport            Time in seconds to wait for bridge ports to come up
+            default: null
+            type: int
+
+          - dns_nameservers            List of DNS resolver IP addresses
+            default: null
+            elements: str
+            type: list
+
+          - dns_search            List of DNS search domains
+            default: null
+            elements: str
+            type: list
+
+          - families            List of IP address families to configure
+            default: null
+            elements: dict
+            type: list
+            options:
+
+            - address              Static IP address for interface
+              default: null
+              type: str
+
+            - gateway              Default gateway
+              default: null
+              type: str
+
+            = name              IP address family
+              choices: [ipv4, ipv6]
+              type: str
+
+            = type              IP address autoconfiguration source
+              choices: [static, dhcp, auto, manual]
+              type: str
+
+          - match_mac            Apply configuration by matching MAC address instead of
+                        interface name (netplan only)
+            default: null
+            type: str
+
+          - mtu            Interface MTU
+            default: null
+            type: int
+
+          = name            Interface name
+            type: str
+
+          - vlans            List of VLAN interfaces to configure
+            default: null
+            elements: dict
+            type: list
+            options:
+
+            - access_points              List of wireless networks to configure
+              default: null
+              elements: dict
+              type: list
+              options:
+
+              - identity                The identity to use for EAP
                 default: null
                 type: str
 
-            - key-management
-                Key management mode
+              - key-management                Key management mode
                 choices: [none, psk, eap]
                 default: psk
                 type: str
 
-            - method
-                The EAP method to use
+              - method                The EAP method to use
                 choices: [tls, peap, ttls]
                 default: null
                 type: str
 
-            - password
-                The password string for EAP, or the pre-shared key for
-                WPA-PSK
+              - password                The password string for EAP, or the pre-shared key for
+                           WPA-PSK
                 default: null
                 no_log: true
                 type: str
 
-            - phase2-auth
-                The phase 2 auth mechanism
+              - phase2-auth                The phase 2 auth mechanism
                 default: null
                 type: str
 
-            - ssid
-                SSID
+              - ssid                SSID
                 default: null
                 type: str
 
-        - allow
-            Subsystem the interface should be brought up by (ifupdown
-            only)
-            default: null
-            type: str
+            - allow              Subsystem the interface should be brought up by
+                      (ifupdown only)
+              default: null
+              type: str
 
-        - bridge_ports
-            Interfaces to add to bridge
-            default: null
-            elements: str
-            type: list
+            - bridge_ports              Interfaces to add to bridge
+              default: null
+              elements: str
+              type: list
 
-        - bridge_waitport
-            Time in seconds to wait for bridge ports to come up
-            default: null
-            type: int
+            - bridge_waitport              Time in seconds to wait for bridge ports to come up
+              default: null
+              type: int
 
-        - dns_nameservers
-            List of DNS resolver IP addresses
-            default: null
-            elements: str
-            type: list
+            - dns_nameservers              List of DNS resolver IP addresses
+              default: null
+              elements: str
+              type: list
 
-        - dns_search
-            List of DNS search domains
-            default: null
-            elements: str
-            type: list
+            - dns_search              List of DNS search domains
+              default: null
+              elements: str
+              type: list
 
-        - families
-            List of IP address families to configure
-            default: null
-            elements: dict
-            type: list
+            - families              List of IP address families to configure
+              default: null
+              elements: dict
+              type: list
+              options:
 
-            OPTIONS:
-
-            - address
-                Static IP address for interface
+              - address                Static IP address for interface
                 default: null
                 type: str
 
-            - gateway
-                Default gateway
+              - gateway                Default gateway
                 default: null
                 type: str
 
-            = name
-                IP address family
+              = name                IP address family
                 choices: [ipv4, ipv6]
                 type: str
 
-            = type
-                IP address autoconfiguration source
+              = type                IP address autoconfiguration source
                 choices: [static, dhcp, auto, manual]
                 type: str
 
-        - match_mac
-            Apply configuration by matching MAC address instead of
-            interface name (netplan only)
-            default: null
-            type: str
+            = id              VLAN ID
+              type: int
 
-        - mtu
-            Interface MTU
-            default: null
-            type: int
+            - mtu              Interface MTU
+              default: null
+              type: int
 
-        = name
-            Interface name
-            type: str
+            = waitonboot              If true, wait for interface to come up before booting
+              type: bool
 
-        - vlans
-            List of VLAN interfaces to configure
-            default: null
-            elements: dict
-            type: list
-
-            OPTIONS:
-
-            - access_points
-                List of wireless networks to configure
-                default: null
-                elements: dict
-                type: list
-
-                OPTIONS:
-
-                - identity
-                    The identity to use for EAP
-                    default: null
-                    type: str
-
-                - key-management
-                    Key management mode
-                    choices: [none, psk, eap]
-                    default: psk
-                    type: str
-
-                - method
-                    The EAP method to use
-                    choices: [tls, peap, ttls]
-                    default: null
-                    type: str
-
-                - password
-                    The password string for EAP, or the pre-shared key
-                    for WPA-PSK
-                    default: null
-                    no_log: true
-                    type: str
-
-                - phase2-auth
-                    The phase 2 auth mechanism
-                    default: null
-                    type: str
-
-                - ssid
-                    SSID
-                    default: null
-                    type: str
-
-            - allow
-                Subsystem the interface should be brought up by
-                (ifupdown only)
-                default: null
-                type: str
-
-            - bridge_ports
-                Interfaces to add to bridge
-                default: null
-                elements: str
-                type: list
-
-            - bridge_waitport
-                Time in seconds to wait for bridge ports to come up
-                default: null
-                type: int
-
-            - dns_nameservers
-                List of DNS resolver IP addresses
-                default: null
-                elements: str
-                type: list
-
-            - dns_search
-                List of DNS search domains
-                default: null
-                elements: str
-                type: list
-
-            - families
-                List of IP address families to configure
-                default: null
-                elements: dict
-                type: list
-
-                OPTIONS:
-
-                - address
-                    Static IP address for interface
-                    default: null
-                    type: str
-
-                - gateway
-                    Default gateway
-                    default: null
-                    type: str
-
-                = name
-                    IP address family
-                    choices: [ipv4, ipv6]
-                    type: str
-
-                = type
-                    IP address autoconfiguration source
-                    choices: [static, dhcp, auto, manual]
-                    type: str
-
-            = id
-                VLAN ID
-                type: int
-
-            - mtu
-                Interface MTU
-                default: null
-                type: int
-
-            = waitonboot
-                If true, wait for interface to come up before booting
-                type: bool
-
-        = waitonboot
-            If true, wait for interface to come up before booting
+          = waitonboot            If true, wait for interface to come up before booting
             type: bool
 
-- network_kernel_options_config_file
-        Path for the file containing networking kernel modules options
-        default: /etc/modprobe.d/zz-ansible-network-options.conf
-        type: str
+- network_kernel_options_config_file  Path for the file containing networking kernel modules options
+          default: /etc/modprobe.d/zz-ansible-network-options.conf
+          type: str
 
-- network_systemd_wait_online
-        If true, enable appropriate network wait-online systemd
-        service
-        default: false
-        type: bool
+- network_systemd_wait_online  If true, enable appropriate network wait-online systemd service
+          default: false
+          type: bool
 
-- network_tune
-        If true, enable network tuning
-        default: false
-        type: bool
+- network_tune  If true, enable network tuning
+          default: false
+          type: bool
 
-- network_tune_interface
-        Override the automatic detection of which network interface to
-        use for setting tuning values
-        default: null
-        type: str
+- network_tune_interface  Override the automatic detection of which network interface to use
+                           for setting tuning values
+          default: null
+          type: str
 
-- network_tune_sysctls
-        List of sysctls that should be applied for different interface
-        speeds
-        default: null
-        elements: dict
-        type: list
+- network_tune_sysctls  List of sysctls that should be applied for different interface
+                         speeds
+          default: null
+          elements: dict
+          type: list
+          options:
 
-        OPTIONS:
-
-        = min_speed
-            Minimum network interface speed (in megabits per second)
-            for which these sysctls should apply
+          = min_speed            Minimum network interface speed (in megabits per second)
+                        for which these sysctls should apply
             type: int
 
-        = sysctls
-            List of sysctls to set
+          = sysctls            List of sysctls to set
             elements: dict
             type: list
+            options:
 
-            OPTIONS:
+            = key              Name of sysctl
+              type: str
 
-            = key
-                Name of sysctl
-                type: str
+            = value              Value of sysctl
+              type: str
 
-            = value
-                Value of sysctl
-                type: str
+- network_wait_on_change  If true, wait for user to accept any network configuration changes
+                           before continuing and applying the changes
+          default: true
+          type: bool
 
-- network_wait_on_change
-        If true, wait for user to accept any network configuration
-        changes before continuing and applying the changes
-        default: true
-        type: bool
+- wireless_packages  List of packages to install when there are wireless network devices
+                      present
+          default: [iw, wpasupplicant]
+          elements: str
+          type: list
 
-- wireless_packages
-        List of packages to install when there are wireless network
-        devices present
-        default: [iw, wpasupplicant]
-        elements: str
-        type: list
-
-- wireless_regulatory_country
-        ISO/IEC 3166-1 alpha2 country code to use for wireless
-        regulatory domain, or empty string to not configure
-        default: ''
-        type: str
+- wireless_regulatory_country  ISO/IEC 3166-1 alpha2 country code to use for wireless regulatory
+                                domain, or empty string to not
+                                configure
+          default: ''
+          type: str
 ```
 
 Installation
