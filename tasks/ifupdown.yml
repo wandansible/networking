@@ -1,10 +1,7 @@
 ---
 - name: Install extra ifupdown helpers
   ansible.builtin.apt:
-    pkg:
-      - rdnssd
-      - resolvconf
-      - vlan
+    pkg: "{{ ifupdown_packages }}"
     install_recommends: false
 
 - name: Configure ifupdown network interfaces

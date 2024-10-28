@@ -16,6 +16,16 @@ argument_specs:
         type: str
         default: /etc/modprobe.d/zz-ansible-network-options.conf
 
+      ifupdown_packages:
+        description: |
+          List of extra helper packages to install for systems using ifupdown
+        type: list
+        elements: str
+        default:
+          - rdnssd
+          - resolvconf
+          - vlan
+
       network_ifupdown_config:
         description: |
           Contents of the /etc/default/networking configuration file,
