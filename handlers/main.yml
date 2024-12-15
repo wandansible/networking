@@ -10,12 +10,15 @@
 - name: Prompt before changing network configuration
   ansible.builtin.pause:
     prompt: |-
-      Current network state:
+      Current network state for {{ item }}:
 
-      {{ _network_state.stdout }}
+      {{ hostvars[item]["_network_state"].stdout }}
 
       Please check the network configuration changes. Press enter to apply or ctrl-c to stop
-  when: network_wait_on_change
+  loop: "{{ play_hosts }}"
+  when:
+    - network_wait_on_change
+    - hostvars[item]["_network_state"] is defined
   listen: confirm network change
 
 - name: restart networking
