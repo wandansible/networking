@@ -25,7 +25,9 @@
   when: _wireless_regdb_install.changed
 
 - name: Configure wireless regulatory country
-  when: wireless_regulatory_country != ""
+  when:
+    - network_interfaces | selectattr('access_points', 'defined') | list
+    - wireless_regulatory_country != ""
   block:
     - name: Configure wireless regulatory country on boot
       ansible.builtin.template:
