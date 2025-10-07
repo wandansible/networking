@@ -5,7 +5,7 @@
     pkg:
       - bridge-utils
     install_recommends: false
-  when: "network_interfaces | selectattr('bridge_ports', 'defined') | list"
+  when: "network_interfaces | selectattr('bridge_ports', 'defined') | list | length >= 1"
 
 - name: Check for netplan
   ansible.builtin.stat:
