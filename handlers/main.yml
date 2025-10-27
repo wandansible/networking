@@ -15,7 +15,7 @@
       {{ hostvars[item]["_network_state"].stdout }}
 
       Please check the network configuration changes. Press enter to apply or ctrl-c to stop
-  loop: "{{ play_hosts }}"
+  loop: "{{ ansible_play_batch }}"
   when:
     - network_wait_on_change
     - hostvars[item]["_network_state"] is defined
