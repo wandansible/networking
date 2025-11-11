@@ -9,7 +9,7 @@
   ansible.builtin.apt:
     pkg: "{{ wireless_packages }}"
     install_recommends: false
-  when: "network_interfaces | selectattr('access_points', 'defined') | list"
+  when: "network_interfaces | selectattr('access_points', 'defined') | list | length >= 1"
 
 - name: Install wireless-regdb if wireless interfaces are configured
   ansible.builtin.apt:
@@ -17,7 +17,7 @@
       - wireless-regdb
     install_recommends: false
   register: _wireless_regdb_install
-  when: "network_interfaces | selectattr('access_points', 'defined') | list"
+  when: "network_interfaces | selectattr('access_points', 'defined') | list | length >= 1"
 
 - name: Reload wireless regulatory database
   ansible.builtin.command:
@@ -26,7 +26,7 @@
 
 - name: Configure wireless regulatory country
   when:
-    - network_interfaces | selectattr('access_points', 'defined') | list
+    - network_interfaces | selectattr('access_points', 'defined') | list | length >= 1
     - wireless_regulatory_country != ""
   block:
     - name: Configure wireless regulatory country on boot
