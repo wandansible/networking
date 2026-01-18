@@ -4,7 +4,7 @@
     cmd: ip address show
   register: _network_state
   changed_when: false
-  when: network_wait_on_change
+  when: network_wait_on_change | bool
   listen: confirm network change
 
 - name: Prompt before changing network configuration
@@ -17,7 +17,7 @@
       Please check the network configuration changes. Press enter to apply or ctrl-c to stop
   loop: "{{ ansible_play_batch }}"
   when:
-    - network_wait_on_change
+    - network_wait_on_change | bool
     - hostvars[item]["_network_state"] is defined
   listen: confirm network change
 

@@ -70,7 +70,7 @@
     name: "systemd-networkd-wait-online.service"
     enabled: "true"
   when:
-    - network_systemd_wait_online
+    - network_systemd_wait_online | bool
     - netplan_renderer == "networkd"
 
 - name: Enable or disable NetworkManager-wait-online systemd service
@@ -78,5 +78,5 @@
     name: "NetworkManager-wait-online.service"
     enabled: "true"
   when:
-    - network_systemd_wait_online
+    - network_systemd_wait_online | bool
     - netplan_renderer == "NetworkManager"

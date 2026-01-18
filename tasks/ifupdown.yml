@@ -63,4 +63,4 @@
   ansible.builtin.systemd:
     name: "ifupdown-wait-online.service"
     enabled: "true"
-  when: network_systemd_wait_online
+  when: network_systemd_wait_online | bool
