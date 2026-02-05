@@ -13,20 +13,20 @@
       ansible.builtin.apt:
         pkg:
           - "ifupdown"
-      when: ansible_distribution == "Debian"
+      when: ansible_facts.distribution == "Debian"
 
     - name: "Install netplan on Ubuntu"
       ansible.builtin.apt:
         pkg:
           - "udev"
           - "netplan.io"
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts.distribution == "Ubuntu"
 
     - name: "Start udev"
       ansible.builtin.systemd:
         name: "udev.service"
         state: "started"
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts.distribution == "Ubuntu"
 
     - name: "Add virtual network interface"
       ansible.builtin.command: "ip tuntap add eno1 mode tap"

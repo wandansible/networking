@@ -5,7 +5,7 @@
       {{ ansible_facts
          | dict2items
          | selectattr('value.device', 'defined')
-         | selectattr('value.device', 'in', ansible_interfaces)
+         | selectattr('value.device', 'in', ansible_facts.interfaces)
          | items2dict }}
 
 - name: Get speed of fastest active physical NIC
@@ -25,5 +25,5 @@
 - name: Get speed of manually specified interface {{ network_tune_interface | default("") }}
   ansible.builtin.set_fact:
     network_max_speed: >-
-      {{ network_devices[network_tune_interface]['speed'] }}
+      {{ network_devices[network_tune_interface].speed }}
   when: network_tune_interface is defined
