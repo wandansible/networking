@@ -5,7 +5,7 @@
       {{ ansible_facts
          | dict2items
          | selectattr('value.device', 'defined')
-         | selectattr('value.device', 'in', ansible_interfaces)
+         | selectattr('value.device', 'in', ansible_facts.interfaces)
          | items2dict }}
 
 - name: Get speed of fastest active physical NIC
