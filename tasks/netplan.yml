@@ -7,13 +7,13 @@
 
 - name: Remove existing netplan configuration files
   ansible.builtin.file:
-    path: "{{ item['path'] }}"
+    path: "{{ item.path }}"
     state: absent
-  loop: "{{ _netplan_configs['files'] }}"
+  loop: "{{ _netplan_configs.files }}"
   loop_control:
-    label: "{{ item['path'] }}"
+    label: "{{ item.path }}"
   when:
-    - item['path'] != "/etc/netplan/10-ansible.yaml"
+    - item.path != "/etc/netplan/10-ansible.yaml"
     - network_interfaces | length >= 1
 
 - name: Configure netplan network interfaces

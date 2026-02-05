@@ -12,13 +12,13 @@
     prompt: |-
       Current network state for {{ item }}:
 
-      {{ hostvars[item]["_network_state"].stdout }}
+      {{ hostvars[item]._network_state.stdout }}
 
       Please check the network configuration changes. Press enter to apply or ctrl-c to stop
   loop: "{{ ansible_play_batch }}"
   when:
     - network_wait_on_change | bool
-    - hostvars[item]["_network_state"] is defined
+    - hostvars[item]._network_state is defined
   listen: confirm network change
 
 - name: restart networking
