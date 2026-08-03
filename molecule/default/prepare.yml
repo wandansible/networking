@@ -24,7 +24,9 @@
 
     - name: "Start udev"
       ansible.builtin.systemd:
-        name: "udev.service"
+        name: >-
+          {{ "udev.service" if ansible_facts.distribution_version is version("25.10", "<=")
+             else "systemd-udevd.service" }}
         state: "started"
       when: ansible_facts.distribution == "Ubuntu"
 
